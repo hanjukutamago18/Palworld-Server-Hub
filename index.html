@@ -29,23 +29,23 @@
             overflow-x: hidden;
         }
 
-        /* Dekorasi Karakter Pal di Kiri & Kanan */
+        /* Dekorasi Karakter Pal Kiri & Kanan (Fit Atas-Bawah) */
         .pal-character {
             position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 280px;
-            height: auto;
+            top: 0;
+            bottom: 0;
+            height: 100vh;
+            width: auto;
+            object-fit: contain;
             pointer-events: none;
             z-index: 10;
             opacity: 0.95;
-            transition: opacity 0.3s ease;
         }
         .pal-left {
-            left: 10px;
+            left: 0;
         }
         .pal-right {
-            right: 10px;
+            right: 0;
         }
         @media (max-width: 1350px) {
             .pal-character {
@@ -340,7 +340,7 @@
 </head>
 <body>
 
-    <!-- Karakter Pal Dekorasi di Kiri & Kanan -->
+    <!-- Karakter Pal Dekorasi di Kiri & Kanan (Fit Atas-Bawah) -->
     <img src="img/imgi_10_img-intro-character-left.png" alt="Pal Left" class="pal-character pal-left">
     <img src="img/imgi_11_img-intro-character-right.png" alt="Pal Right" class="pal-character pal-right">
 
