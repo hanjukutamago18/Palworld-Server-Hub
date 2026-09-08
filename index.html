@@ -553,12 +553,18 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
-                        playersListContainer.innerHTML = players.map(p => `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                                <span style="color: #fff; font-weight: 500;">🎮 ${p.name || 'Unknown Player'}</span>
-                                <span style="font-size: 0.8em; color: var(--text-muted); font-family: monospace;">UID: ${p.playerUid ? p.playerUid.substring(0, 8) + '...' : '-'}</span>
-                            </div>
-                        `).join('');
+                        playersListContainer.innerHTML = players.map(p => {
+                            // Mendukung berbagai kemungkinan nama properti UID dari API Palworld
+                            const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
+                            const formattedUid = rawUid ? rawUid.substring(0, 8) + '...' : '-';
+                            
+                            return `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: #fff; font-weight: 500;">🎮 ${p.name || 'Unknown Player'}</span>
+                                    <span style="font-size: 0.8em; color: var(--text-muted); font-family: monospace;">UID: ${formattedUid}</span>
+                                </div>
+                            `;
+                        }).join('');
                     } else {
                         playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Belum ada pemain yang online saat ini.</div>`;
                     }
