@@ -347,11 +347,12 @@
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
 
+            // Render Spesifikasi Hardware
             document.getElementById('det-vcpu').innerText = data.vcpu || "-";
             document.getElementById('det-ram').innerText = data.ram || "-";
             document.getElementById('det-disk').innerText = data.disk || "-";
 
-            // Tangani Password Server (Jika ada isinya)
+            // Render Password Server (Jika ada isinya)
             if (data.server_password && data.server_password.trim() !== "") {
                 plainServerPassword = data.server_password;
                 document.getElementById('password-container').classList.remove('hidden');
@@ -360,7 +361,7 @@
                 document.getElementById('password-container').classList.add('hidden');
             }
 
-            // Tangani Tombol Support / Donasi
+            // Render Tombol Support / Donasi
             if (data.support_link && data.support_link.trim() !== "") {
                 document.getElementById('det-support-link').href = data.support_link;
                 document.getElementById('support-card').classList.remove('hidden');
