@@ -114,7 +114,7 @@
         .status-badge.checking { background-color: rgba(255, 159, 67, 0.1); color: var(--accent-orange); border-color: rgba(255, 159, 67, 0.3); }
         .status-badge .dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 5px var(--accent-green); }
         .status-badge.offline .dot { background-color: #ff4747; box-shadow: 0 0 5px #ff4747; }
-        .status-badge.checking .dot { background-color: var(--accent-orange); box-shadow: 0 0 5px #ff4747; }
+        .status-badge.checking .dot { background-color: #ff4747; box-shadow: 0 0 5px #ff4747; }
 
         .grid-layout { display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 20px; }
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
@@ -175,14 +175,14 @@
         .players-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 10px;
-            margin-top: 8px;
+            gap: 8px;
+            margin-top: 6px;
         }
         .player-box {
             background-color: #100c17;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -348,10 +348,10 @@
                 </div>
             </div>
 
-            <!-- DAFTAR PEMAIN ONLINE (Jarak Judul & List Lebih Compact) -->
-            <div class="card">
-                <div class="section-title" style="margin-bottom: 4px;">Daftar Pemain Online</div>
-                <div id="players-list-content" class="info-text">Memuat daftar pemain...</div>
+            <!-- DAFTAR PEMAIN ONLINE (Jarak Diperketat Menjadi Sangat Dekat) -->
+            <div class="card" style="padding: 18px 24px;">
+                <div class="section-title" style="margin-bottom: 2px;">Daftar Pemain Online</div>
+                <div id="players-list-content" class="info-text" style="margin-top: 4px;">Memuat daftar pemain...</div>
             </div>
 
             <div class="grid-layout">
@@ -551,7 +551,6 @@
                 fetchServers();
             }
 
-            // Jika ada parameter ?edit= di URL saat halaman dimuat
             const editSlug = urlParams.get('edit');
             if (editSlug) {
                 setTimeout(async () => {
