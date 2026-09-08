@@ -171,18 +171,18 @@
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Daftar Pemain Online (Compact & Neat Grid Box) */
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 8px;
+        /* Styling Daftar Pemain Online (Compact & Vertically Stacked List) */
+        .players-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
             margin-top: 6px;
         }
         .player-box {
             background-color: #100c17;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px 14px;
+            border-radius: 8px;
+            padding: 8px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -191,8 +191,8 @@
         .player-box:hover {
             border-color: var(--accent-green);
             background-color: #161622;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(163, 255, 71, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(163, 255, 71, 0.1);
         }
 
         .modal-overlay {
@@ -348,8 +348,8 @@
                 </div>
             </div>
 
-            <!-- DAFTAR PEMAIN ONLINE (Jarak Diperketat Menjadi Sangat Dekat) -->
-            <div class="card" style="padding: 18px 24px;">
+            <!-- DAFTAR PEMAIN ONLINE (Compact Stack ke Bawah) -->
+            <div class="card" style="padding: 16px 20px;">
                 <div class="section-title" style="margin-bottom: 2px;">Daftar Pemain Online</div>
                 <div id="players-list-content" class="info-text" style="margin-top: 4px;">Memuat daftar pemain...</div>
             </div>
@@ -833,8 +833,9 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
+                        // Menggunakan stack vertikal ke bawah yang compact dan fleksibel
                         playersListContainer.innerHTML = `
-                            <div class="players-grid">
+                            <div class="players-stack">
                                 ${players.map(p => {
                                     const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
                                     const maskedUid = rawUid ? rawUid.substring(0, 16) + (rawUid.length > 16 ? '...' : '') : '-';
