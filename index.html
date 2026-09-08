@@ -453,20 +453,24 @@
                         <a href="/" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">← Kembali ke Beranda</a>
                     </div>
 
-                    <!-- Kolom Kanan: Koneksi Server, Discord, & Dukungan -->
+                    <!-- Kolom Kanan: Share Link, Koneksi Server, Discord, & Dukungan -->
                     <div>
+                        <!-- BAGIKAN HALAMAN SERVER (TERPISAH & LINK PENDEK) -->
+                        <div class="card">
+                            <div class="section-title" style="margin-bottom: 12px;">Bagikan Halaman Server</div>
+                            <div class="info-text" style="margin-bottom: 14px;">Salin link pendek halaman ini:</div>
+                            <div class="ip-box">
+                                <span id="det-page-link">-</span>
+                                <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyPageLink()">SALIN</button>
+                            </div>
+                        </div>
+
                         <!-- KONEKSI & PASSWORD -->
                         <div class="card">
                             <div class="section-title" style="margin-bottom: 12px;">Koneksi Server</div>
                             <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
                             
-                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Link Halaman Server</div>
-                            <div class="ip-box">
-                                <span id="det-page-link">-</span>
-                                <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyPageLink()">SALIN</button>
-                            </div>
-
-                            <div style="font-size: 0.75em; color: var(--text-muted); margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
+                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
                             <div class="ip-box">
                                 <span id="det-ip">-</span>
                                 <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
@@ -618,7 +622,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUser = null;
         let activeServerIP = "";
-        let activePageLink = "";
+        let fullPageLink = "";
         let plainServerPassword = "";
         let isPasswordVisible = false;
         let cachedServerData = null;
@@ -891,9 +895,9 @@
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
 
-            // Set Page Link Box
-            activePageLink = window.location.origin + '/server/' + data.slug;
-            document.getElementById('det-page-link').innerText = activePageLink;
+            // Set Clean Short Page Link Display & Full Link for Copying
+            fullPageLink = window.location.origin + '/server/' + data.slug;
+            document.getElementById('det-page-link').innerText = '/server/' + data.slug;
 
             document.getElementById('det-vcpu').innerText = data.vcpu || "-";
             document.getElementById('det-ram').innerText = data.ram || "-";
@@ -1025,7 +1029,7 @@
         }
 
         function copyPageLink() {
-            navigator.clipboard.writeText(activePageLink);
+            navigator.clipboard.writeText(fullPageLink);
             const btn = event.target;
             const originalText = btn.innerText;
             btn.innerText = "TERSALIN!";
@@ -1036,7 +1040,6 @@
             e.preventDefault();
             if (!currentUser) return alert('Silakan login terlebih dahulu!');
 
-            // Ambil kategori yang dipilih
             let categories = [];
             if (document.getElementById('cat-pve').checked) categories.push('PVE');
             if (document.getElementById('cat-pvp').checked) categories.push('PVP');
@@ -1047,7 +1050,6 @@
                 return alert('Pilih minimal satu kategori server!');
             }
 
-            // Ambil metode join yang dipilih
             let joinMethods = [];
             if (document.getElementById('join-community').checked) joinMethods.push('Cari di Community Server');
             if (document.getElementById('join-ip').checked) joinMethods.push('Join via IP (Direct Connect)');
