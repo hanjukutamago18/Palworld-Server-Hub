@@ -21,167 +21,83 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 30px 15px; display: flex; justify-content: center;
+            margin: 0; padding: 40px 20px; display: flex; justify-content: center;
         }
 
         .container { max-width: 900px; width: 100%; }
-
-        /* Banner Gaming Keren */
-        .hero-banner {
-            width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, #1f1435 0%, #2b184a 50%, #120e1c 100%),
-                        radial-gradient(circle at top right, rgba(255, 42, 122, 0.2), transparent 40%);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            margin-bottom: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-banner::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, rgba(163,255,71,0.05) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .hero-title {
-            font-size: 2.2em;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 3px;
-            margin: 0;
-            text-shadow: 0 0 20px rgba(255, 42, 122, 0.5);
-        }
-
-        .hero-subtitle {
-            font-size: 0.9em;
-            color: var(--accent-green);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-top: 6px;
-            font-weight: 600;
-        }
-
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 28px; margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            border-radius: 12px; padding: 24px; margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
 
-        .header-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-card { display: flex; justify-content: space-between; align-items: center; }
         h1 { margin: 0; color: #fff; font-size: 1.8em; }
-        h2 { font-size: 0.85em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 6px; }
+        h2 { font-size: 0.9em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; }
         
         .status-badge {
             background-color: rgba(163, 255, 71, 0.1); color: var(--accent-green);
-            padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 0.85em;
-            display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
+            padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85em;
+            display: flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
         }
         .status-badge.offline { background-color: rgba(255, 71, 71, 0.1); color: #ff4747; border-color: rgba(255, 71, 71, 0.3); }
         .status-badge .dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
         .status-badge.offline .dot { background-color: #ff4747; box-shadow: 0 0 8px #ff4747; }
 
-        .grid-layout { display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 20px; }
+        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
 
         .section-title {
             color: var(--accent-pink); font-size: 0.85em; text-transform: uppercase;
-            letter-spacing: 1.5px; margin-bottom: 16px; font-weight: bold;
+            letter-spacing: 1.5px; margin-bottom: 16px;
         }
         .section-title::before { content: "// "; }
 
         .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; white-space: pre-line; }
 
-        /* Kotak IP & Password Seragam */
         .ip-box {
             background-color: #100c17; border: 1px solid var(--border-color);
-            padding: 12px 16px; border-radius: 10px; font-family: monospace;
-            font-size: 0.95em; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;
-        }
-        .ip-box span {
-            overflow-x: auto; white-space: nowrap; scrollbar-width: thin;
+            padding: 12px 16px; border-radius: 8px; font-family: monospace;
+            font-size: 1.05em; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+            word-break: break-all;
         }
 
-        .btn {
+        .copy-btn, .btn {
             background: var(--accent-green); color: #000; border: none;
-            padding: 11px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;
-            font-size: 0.9em; text-decoration: none; transition: 0.2s; display: inline-flex;
-            align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;
+            font-size: 0.85em; text-decoration: none; transition: 0.2s; display: inline-block; text-align: center;
         }
-        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .copy-btn:hover, .btn:hover { opacity: 0.85; }
         .btn-pink { background: var(--accent-pink); color: #fff; }
         .btn-danger { background: #ff4747; color: #fff; }
-        
-        /* Tombol Donasi Dibuat Proporsional & Rapi di Tengah */
-        .btn-support { 
-            background: var(--accent-orange); 
-            color: #000; 
-            padding: 10px 22px; 
-            font-size: 0.9em; 
-            font-weight: 600;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        .btn-support:hover { 
-            opacity: 0.85; 
-            transform: translateY(-1px); 
-        }
-
+        .btn-support { background: var(--accent-orange); color: #000; width: 100%; margin-top: 10px; display: block; }
         .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
 
-        .form-actions {
-            display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px;
-        }
-
         input, textarea, select {
-            width: 100%; padding: 12px 16px; margin: 8px 0 16px 0;
+            width: 100%; padding: 10px; margin: 8px 0 16px 0;
             background: #100c17; border: 1px solid var(--border-color);
-            border-radius: 8px; color: #fff; box-sizing: border-box; font-family: inherit; font-size: 0.95em;
+            border-radius: 6px; color: #fff; box-sizing: border-box; font-family: inherit;
         }
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--accent-pink); outline: none; box-shadow: 0 0 8px rgba(255, 42, 122, 0.2);
-        }
-        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
         .server-item {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-            padding: 16px 0; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid var(--border-color);
         }
         .server-item:last-child { border-bottom: none; }
         .hidden { display: none !important; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 15px 0; }
-        .stat-box { background: #100c17; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; }
-        .stat-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
-        .stat-value { font-size: 1.2em; font-weight: bold; color: #fff; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px 0; }
+        .stat-box { background: #100c17; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; }
+        .stat-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-size: 1.1em; font-weight: bold; color: #fff; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Banner Gaming Keren -->
-        <div class="hero-banner">
-            <h2 class="hero-subtitle">Dedicated Server Hub</h2>
-            <h1 class="hero-title">PALWORLD INDONESIA</h1>
-        </div>
-
         <!-- BERANDA -->
         <div id="view-home">
             <div class="card flex-between">
@@ -204,11 +120,11 @@
                 <div id="server-list" class="info-text">Memuat daftar server...</div>
             </div>
 
-            <!-- FORM TAMBAH / EDIT SERVER -->
+            <!-- FORM TAMBAH / EDIT SERVER (TERSEMBUNYI SECARA DEFAULT) -->
             <div class="card hidden" id="register-card">
                 <div class="flex-between" style="margin-bottom: 15px;">
                     <div class="section-title" id="form-title" style="margin: 0;">Daftarkan Server Baru</div>
-                    <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="toggleRegisterForm()">✕ Tutup</button>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75em;" onclick="toggleRegisterForm()">✕ Tutup</button>
                 </div>
 
                 <form id="server-form" onsubmit="saveServer(event)">
@@ -220,8 +136,8 @@
                     <label>Deskripsi Server</label>
                     <textarea id="srv-desc" rows="3" placeholder="Jelajahi dunia Palworld bersama komunitas kami..."></textarea>
                     
-                    <label>IP Address / Domain URL & Port Game</label>
-                    <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029 atau server.domain.com:28029" required>
+                    <label>IP Address & Port Game</label>
+                    <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029" required>
                     
                     <label>Cara Bergabung</label>
                     <select id="srv-join">
@@ -244,7 +160,7 @@
                     <label>Slug URL Unik (untuk URL publik)</label>
                     <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                         <div>
                             <label>vCPU</label>
                             <input type="text" id="srv-vcpu" placeholder="3 vCPU">
@@ -259,8 +175,8 @@
                         </div>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1; min-width: 200px;">Simpan & Daftarkan Server</button>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1;">Simpan & Daftarkan Server</button>
                         <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
                         <button type="button" class="btn btn-secondary hidden" id="cancel-edit-btn" onclick="resetForm()">Batal</button>
                     </div>
@@ -285,7 +201,7 @@
             <div class="card">
                 <div class="flex-between" style="margin-bottom: 10px;">
                     <div class="section-title" style="margin: 0;">Status & Statistik Live</div>
-                    <button class="btn" style="padding: 6px 14px; font-size: 0.8em;" onclick="loadLiveStats()">🔄 Refresh</button>
+                    <button class="btn" style="padding: 4px 10px; font-size: 0.75em;" onclick="loadLiveStats()">🔄 Refresh</button>
                 </div>
                 
                 <div class="stats-grid">
@@ -300,12 +216,6 @@
                 </div>
             </div>
 
-            <!-- DAFTAR PEMAIN ONLINE -->
-            <div class="card">
-                <div class="section-title">Daftar Pemain Online</div>
-                <div id="players-list-content" class="info-text">Memuat daftar pemain...</div>
-            </div>
-
             <div class="grid-layout">
                 <div>
                     <div class="card">
@@ -317,45 +227,41 @@
                             <h4 id="det-join" style="margin:4px 0 15px 0; color:#fff;">-</h4>
 
                             <p style="margin:0; font-size:0.8em; color:var(--text-muted);">SPESIFIKASI HARDWARE</p>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px;">
-                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 6px;">
+                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
                                     <span style="font-size:0.75em; color:var(--text-muted);">vCPU</span>
                                     <h4 id="det-vcpu" style="margin:2px 0 0 0; color:#fff;">-</h4>
                                 </div>
-                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
                                     <span style="font-size:0.75em; color:var(--text-muted);">RAM</span>
                                     <h4 id="det-ram" style="margin:2px 0 0 0; color:#fff;">-</h4>
                                 </div>
-                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
                                     <span style="font-size:0.75em; color:var(--text-muted);">DISK</span>
                                     <h4 id="det-disk" style="margin:2px 0 0 0; color:#fff;">-</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <a href="/" class="btn btn-secondary" style="width: 100%;">← Kembali ke Beranda</a>
+                    <a href="/" class="btn btn-secondary">← Kembali ke Beranda</a>
                 </div>
 
                 <div>
                     <!-- KONEKSI & PASSWORD -->
                     <div class="card">
                         <div class="section-title">Koneksi Server</div>
-                        <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
+                        <div class="info-text" style="margin-bottom: 10px;">Salin IP di bawah ini untuk bergabung:</div>
                         
-                        <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
                         <div class="ip-box">
                             <span id="det-ip">-</span>
-                            <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
+                            <button class="copy-btn" onclick="copyIP()">SALIN</button>
                         </div>
 
-                        <div id="password-container" class="hidden" style="margin-top: 14px;">
-                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server</div>
-                            <div class="ip-box">
-                                <span id="det-pass-display" style="color: #fff;">••••••••</span>
-                                <div style="display: flex; gap: 6px; white-space: nowrap;">
-                                    <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="padding: 6px 10px; font-size: 0.8em; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">LIHAT</button>
-                                    <button class="copy-btn btn" id="copy-pass-btn" onclick="copyPassword()" style="padding: 6px 10px; font-size: 0.8em;">SALIN</button>
-                                </div>
+                        <div id="password-container" class="hidden" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                            <p style="margin:0 0 8px 0; font-size:0.8em; color:var(--text-muted);">PASSWORD SERVER</p>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="password" id="det-server-pass" value="" readonly style="margin:0; background:#100c17; font-family:monospace; color:#fff;">
+                                <button class="copy-btn" id="reveal-pass-btn" onclick="togglePassword()" style="white-space:nowrap;">LIHAT</button>
                             </div>
                         </div>
                     </div>
@@ -363,8 +269,8 @@
                     <!-- TOMBOL DONASI / SUPPORT -->
                     <div class="card hidden" id="support-card" style="text-align: center;">
                         <div class="section-title" style="text-align: left;">Dukung Server</div>
-                        <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa.</p>
-                        <a href="#" id="det-support-link" target="_blank" class="btn-support">☕ Support / Donasi Server</a>
+                        <p class="info-text" style="font-size: 0.85em; margin-bottom: 12px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa.</p>
+                        <a href="#" id="det-support-link" target="_blank" class="btn btn-support">☕ Support / Donasi Server</a>
                     </div>
                 </div>
             </div>
@@ -376,10 +282,8 @@
             <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
             <label>Email</label>
             <input type="email" id="auth-email" placeholder="email@domain.com">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn btn-pink" style="flex: 1;" onclick="handleLogin()">Kirim Link Login</button>
-                <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
-            </div>
+            <button class="btn" onclick="handleLogin()">Kirim Link Login</button>
+            <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
         </div>
     </div>
 
@@ -391,7 +295,6 @@
         let currentUser = null;
         let activeServerIP = "";
         let plainServerPassword = "";
-        let isPasswordVisible = false;
         let cachedServerData = null;
 
         async function init() {
@@ -420,8 +323,8 @@
 
             if (currentUser) {
                 authSection.innerHTML = `
-                    <span style="font-size: 0.9em; margin-right: 12px; color: var(--text-muted);">${currentUser.email}</span>
-                    <button class="btn btn-pink" style="padding: 8px 16px;" onclick="handleLogout()">Logout</button>
+                    <span style="font-size: 0.9em; margin-right: 15px; color: var(--text-muted);">${currentUser.email}</span>
+                    <button class="btn btn-pink" onclick="handleLogout()">Logout</button>
                 `;
                 addBtnContainer.classList.remove('hidden');
             } else {
@@ -466,12 +369,12 @@
             listDiv.innerHTML = data.map(srv => `
                 <div class="server-item">
                     <div>
-                        <strong style="color: #fff; font-size: 1.15em;">${srv.name}</strong><br>
-                        <span style="font-size: 0.85em; color: var(--text-muted);">Alamat: ${srv.ip}</span>
+                        <strong style="color: #fff; font-size: 1.1em;">${srv.name}</strong><br>
+                        <span style="font-size: 0.85em; color: var(--text-muted);">IP: ${srv.ip}</span>
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <a href="/server/${srv.slug}" class="btn" style="padding: 8px 16px; font-size: 0.85em;">Status</a>
-                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 8px 16px; font-size: 0.85em;">Edit</a>` : ''}
+                    <div>
+                        <a href="/server/${srv.slug}" class="btn" style="padding: 6px 12px; font-size: 0.8em; margin-right: 5px;">Status</a>
+                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.8em;">Edit</a>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -498,10 +401,8 @@
 
             if (data.server_password && data.server_password.trim() !== "") {
                 plainServerPassword = data.server_password;
-                isPasswordVisible = false;
                 document.getElementById('password-container').classList.remove('hidden');
-                document.getElementById('det-pass-display').innerText = "••••••••";
-                document.getElementById('reveal-pass-btn').innerText = "LIHAT";
+                document.getElementById('det-server-pass').value = "••••••••";
             } else {
                 document.getElementById('password-container').classList.add('hidden');
             }
@@ -536,8 +437,6 @@
             badge.className = "status-badge";
             badge.innerHTML = `<div class="dot"></div><span>MENGECEK...</span>`;
 
-            const playersListContainer = document.getElementById('players-list-content');
-
             try {
                 const res = await fetch(`/api/status?ip=${encodeURIComponent(cachedServerData.ip)}&api_port=${encodeURIComponent(cachedServerData.api_port)}&password=${encodeURIComponent(cachedServerData.admin_password)}`);
                 const json = await res.json();
@@ -547,27 +446,8 @@
                     badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
 
                     document.getElementById('stat-version').innerText = json.info.version || "-";
-                    
-                    const players = json.players && json.players.players ? json.players.players : [];
-                    const playerCount = players.length;
+                    const playerCount = json.players && json.players.players ? json.players.players.length : 0;
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
-
-                    if (playerCount > 0) {
-                        playersListContainer.innerHTML = players.map(p => {
-                            // Mendukung berbagai kemungkinan nama properti UID dari API Palworld
-                            const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
-                            const formattedUid = rawUid ? rawUid.substring(0, 8) + '...' : '-';
-                            
-                            return `
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                                    <span style="color: #fff; font-weight: 500;">🎮 ${p.name || 'Unknown Player'}</span>
-                                    <span style="font-size: 0.8em; color: var(--text-muted); font-family: monospace;">UID: ${formattedUid}</span>
-                                </div>
-                            `;
-                        }).join('');
-                    } else {
-                        playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Belum ada pemain yang online saat ini.</div>`;
-                    }
                 } else {
                     throw new Error("Server offline");
                 }
@@ -576,29 +456,21 @@
                 badge.innerHTML = `<div class="dot"></div><span>OFFLINE</span>`;
                 document.getElementById('stat-version').innerText = "Offline";
                 document.getElementById('stat-players').innerText = "0 / 32";
-                playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Server sedang offline atau gagal terhubung ke REST API.</div>`;
             }
         }
 
         function togglePassword() {
-            const passDisplay = document.getElementById('det-pass-display');
+            const passInput = document.getElementById('det-server-pass');
             const btn = document.getElementById('reveal-pass-btn');
-            isPasswordVisible = !isPasswordVisible;
-            if (isPasswordVisible) {
-                passDisplay.innerText = plainServerPassword;
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                passInput.value = plainServerPassword;
                 btn.innerText = "SEMBUNYIKAN";
             } else {
-                passDisplay.innerText = "••••••••";
+                passInput.type = "password";
+                passInput.value = "••••••••";
                 btn.innerText = "LIHAT";
             }
-        }
-
-        function copyPassword() {
-            navigator.clipboard.writeText(plainServerPassword);
-            const btn = document.getElementById('copy-pass-btn');
-            const originalText = btn.innerText;
-            btn.innerText = "TERSALIN!";
-            setTimeout(() => btn.innerText = originalText, 2000);
         }
 
         async function saveServer(e) {
@@ -687,7 +559,7 @@
                         document.getElementById('delete-server-btn').classList.remove('hidden');
                         document.getElementById('cancel-edit-btn').classList.remove('hidden');
                         document.getElementById('register-card').classList.remove('hidden');
-                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
+                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, height: 'smooth' });
                     }
                 }, 1000);
             }
@@ -695,10 +567,9 @@
 
         function copyIP() {
             navigator.clipboard.writeText(activeServerIP);
-            const btn = document.querySelector('.ip-box .copy-btn');
-            const originalText = btn.innerText;
+            const btn = document.querySelector('.copy-btn');
             btn.innerText = "TERSALIN!";
-            setTimeout(() => btn.innerText = originalText, 2000);
+            setTimeout(() => btn.innerText = "SALIN", 2000);
         }
 
         init();
