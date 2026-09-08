@@ -336,6 +336,43 @@
         .checkbox-label input {
             width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--accent-pink);
         }
+
+        /* --- Styling Input Khusus Spesifikasi (Hanya Angka + Label Satuan Otomatis) --- */
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+            background: #100c17;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 8px 0 16px 0;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .input-with-unit:focus-within {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 8px rgba(255, 42, 122, 0.2);
+        }
+        .input-with-unit input {
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+            flex: 1;
+        }
+        .input-with-unit input:focus {
+            box-shadow: none;
+        }
+        .input-with-unit .unit {
+            padding: 0 14px;
+            color: var(--text-muted);
+            font-size: 0.85em;
+            font-weight: 600;
+            background: #161122;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            align-self: stretch; /* Memanjang penuh menyesuaikan tinggi input */
+        }
     </style>
 </head>
 <body>
@@ -401,10 +438,10 @@
                     <h1 style="margin-bottom: 20px; font-size: 1.6em;">Palworld Dedicated Server Hub</h1>
                     
                     <p class="info-text" style="font-size: 1.05em; color: var(--text-main);">
-                        Aplikasi ini dikembangkan untuk mempertemukan para pemain (<em>player</em>) dengan para pengelola Dedicated Server Palworld di Indonesia.
+                        Aplikasi ini dikembangkan untuk mempertemukan para pemain (<em>player</em>) dengan pengurus Dedicated Server Palworld di Indonesia.
                     </p>
                     <p class="info-text">
-                        Tujuan utama platform ini adalah untuk memudahkan pemain dalam menemukan Dedicated Server yang sesuai dengan kriteria dan preferensi bermain mereka, sekaligus membantu para pengelola server dalam menjangkau audiens yang lebih luas guna membangun komunitas pemain yang aktif dan ramai.
+                        Tujuan utama platform ini adalah untuk memudahkan pemain dalam menemukan Dedicated Server yang sesuai dengan kriteria dan preferensi bermain mereka, sekaligus membantu para pengurus server dalam menjangkau audiens yang lebih luas guna membangun komunitas pemain yang aktif dan ramai.
                     </p>
                     <p class="info-text">
                         Dengan adanya direktori status server secara <em>real-time</em>, pemain dapat melihat statistik pemain aktif, versi server, dan cara bergabung sebelum memutuskan untuk masuk ke dalam sebuah komunitas.
@@ -632,9 +669,28 @@
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                        <div><label>vCPU</label><input type="text" id="srv-vcpu" placeholder="3 vCPU"></div>
-                        <div><label>RAM</label><input type="text" id="srv-ram" placeholder="12 GB"></div>
-                        <div><label>Disk</label><input type="text" id="srv-disk" placeholder="60 GB SSD"></div>
+                        <div>
+                            <label>vCPU</label>
+                            <!-- Script oninput mencegah pengetikan karakter selain angka -->
+                            <div class="input-with-unit">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="srv-vcpu" placeholder="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                <span class="unit">vCPU</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label>RAM</label>
+                            <div class="input-with-unit">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="srv-ram" placeholder="12" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                <span class="unit">GB</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Disk</label>
+                            <div class="input-with-unit">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="srv-disk" placeholder="60" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                <span class="unit">GB</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-actions">
@@ -793,9 +849,11 @@
             document.getElementById('srv-pass').value = data.admin_password || '';
             document.getElementById('srv-slug').value = data.slug || '';
             document.getElementById('srv-is-public').checked = data.is_public !== false;
-            document.getElementById('srv-vcpu').value = data.vcpu || '';
-            document.getElementById('srv-ram').value = data.ram || '';
-            document.getElementById('srv-disk').value = data.disk || '';
+            
+            // Memfilter huruf dari data lama database agar rapi saat diedit (Hanya tampil angka)
+            document.getElementById('srv-vcpu').value = data.vcpu ? data.vcpu.replace(/[^0-9.]/g, '') : '';
+            document.getElementById('srv-ram').value = data.ram ? data.ram.replace(/[^0-9.]/g, '') : '';
+            document.getElementById('srv-disk').value = data.disk ? data.disk.replace(/[^0-9.]/g, '') : '';
 
             document.getElementById('form-title').innerText = "Edit Informasi Server";
             document.getElementById('submit-btn').innerText = "Simpan Perubahan";
@@ -1107,9 +1165,15 @@
             const admin_password = document.getElementById('srv-pass').value;
             const slug = document.getElementById('srv-slug').value;
             const is_public = document.getElementById('srv-is-public').checked;
-            const vcpu = document.getElementById('srv-vcpu').value;
-            const ram = document.getElementById('srv-ram').value;
-            const disk = document.getElementById('srv-disk').value;
+            
+            // Menggabungkan Inputan Angka dengan Labelnya Saat Disimpan ke Database
+            const vcpuRaw = document.getElementById('srv-vcpu').value;
+            const ramRaw = document.getElementById('srv-ram').value;
+            const diskRaw = document.getElementById('srv-disk').value;
+
+            const vcpu = vcpuRaw ? vcpuRaw + ' vCPU' : '';
+            const ram = ramRaw ? ramRaw + ' GB' : '';
+            const disk = diskRaw ? diskRaw + ' GB' : '';
 
             if (serverId) {
                 const { error } = await supabaseClient.from('servers').update({
