@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palworld Server Hub</title>
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -21,19 +20,14 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            margin: 0; padding: 40px 20px; display: flex; justify-content: center;
         }
 
         .container { max-width: 900px; width: 100%; }
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
+            border-radius: 12px; padding: 24px; margin-bottom: 20px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
 
@@ -42,69 +36,41 @@
         h2 { font-size: 0.9em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; }
         
         .status-badge {
-            background-color: rgba(163, 255, 71, 0.1);
-            color: var(--accent-green);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.85em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(163, 255, 71, 0.3);
+            background-color: rgba(163, 255, 71, 0.1); color: var(--accent-green);
+            padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85em;
+            display: flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
         }
-        .status-badge .dot {
-            width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green);
-        }
+        .status-badge .dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
 
         .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
 
         .section-title {
-            color: var(--accent-pink);
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
+            color: var(--accent-pink); font-size: 0.85em; text-transform: uppercase;
+            letter-spacing: 1.5px; margin-bottom: 16px;
         }
         .section-title::before { content: "// "; }
 
-        .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; }
+        .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; white-space: pre-line; }
 
         .ip-box {
-            background-color: #100c17;
-            border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 1.1em;
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            background-color: #100c17; border: 1px solid var(--border-color);
+            padding: 12px 16px; border-radius: 8px; font-family: monospace;
+            font-size: 1.1em; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
         }
 
         .copy-btn, .btn {
-            background: var(--accent-green);
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.85em;
-            text-decoration: none;
-            transition: 0.2s;
-            display: inline-block;
+            background: var(--accent-green); color: #000; border: none;
+            padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;
+            font-size: 0.85em; text-decoration: none; transition: 0.2s; display: inline-block;
         }
         .copy-btn:hover, .btn:hover { opacity: 0.85; }
         .btn-pink { background: var(--accent-pink); color: #fff; }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%; padding: 10px; margin: 8px 0 16px 0;
             background: #100c17; border: 1px solid var(--border-color);
-            border-radius: 6px; color: #fff; box-sizing: border-box;
+            border-radius: 6px; color: #fff; box-sizing: border-box; font-family: inherit;
         }
         label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -120,7 +86,7 @@
 <body>
 
     <div class="container">
-        <!-- TAMPILAN 1: BERANDA / LIST SERVER PUBLIK & LOGIN -->
+        <!-- BERANDA -->
         <div id="view-home">
             <div class="card flex-between">
                 <div>
@@ -138,29 +104,56 @@
             </div>
 
             <div class="card hidden" id="register-card">
-                <div class="section-title">Daftarkan Server Baru</div>
-                <form id="server-form" onsubmit="registerServer(event)">
+                <div class="section-title" id="form-title">Daftarkan Server Baru</div>
+                <form id="server-form" onsubmit="saveServer(event)">
+                    <input type="hidden" id="edit-server-id">
+                    
                     <label>Nama Server</label>
                     <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
+                    
+                    <label>Deskripsi Server</label>
+                    <textarea id="srv-desc" rows="3" placeholder="Jelajahi dunia Palworld bersama komunitas kami..."></textarea>
                     
                     <label>IP Address & Port Game</label>
                     <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029" required>
                     
+                    <label>Cara Bergabung</label>
+                    <select id="srv-join">
+                        <option value="Community Server (Cari di dalam game)">Community Server (Cari via Menu In-Game)</option>
+                        <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
+                    </select>
+
                     <label>Port REST API</label>
                     <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
 
                     <label>Password Admin</label>
                     <input type="password" id="srv-pass" placeholder="Password admin server" required>
 
-                    <label>Slug URL Unik</label>
+                    <label>Slug URL Unik (untuk URL publik)</label>
                     <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
 
-                    <button type="submit" class="btn btn-pink">Simpan & Daftarkan</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label>vCPU</label>
+                            <input type="text" id="srv-vcpu" placeholder="2 vCPU">
+                        </div>
+                        <div>
+                            <label>RAM</label>
+                            <input type="text" id="srv-ram" placeholder="8 GB">
+                        </div>
+                        <div>
+                            <label>Disk</label>
+                            <input type="text" id="srv-disk" placeholder="50 GB SSD">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-pink" id="submit-btn">Simpan & Daftarkan Server</button>
+                    <button type="button" class="btn hidden" id="cancel-edit-btn" onclick="resetForm()" style="background:transparent; color:var(--text-muted);">Batal Edit</button>
                 </form>
             </div>
         </div>
 
-        <!-- TAMPILAN 2: HALAMAN DETAIL STATUS SERVER SPESIFIK -->
+        <!-- DETAIL SERVER -->
         <div id="view-detail" class="hidden">
             <div class="card header-card">
                 <div>
@@ -177,16 +170,26 @@
                 <div>
                     <div class="card">
                         <div class="section-title">Tentang Server</div>
-                        <div class="info-text">Halaman status resmi yang terhubung langsung ke mesin server komunitas Palworld.</div>
+                        <div class="info-text" id="det-desc">-</div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                            <div>
-                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">TIPE SERVER</p>
-                                <h4 style="margin:4px 0 0 0; color:#fff;">Community Server</h4>
-                            </div>
-                            <div>
-                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">VERSI GAME</p>
-                                <h4 id="det-version" style="margin:4px 0 0 0; color:#fff;">-</h4>
+                        <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                            <p style="margin:0; font-size:0.8em; color:var(--text-muted);">METODE JOIN</p>
+                            <h4 id="det-join" style="margin:4px 0 15px 0; color:#fff;">-</h4>
+
+                            <p style="margin:0; font-size:0.8em; color:var(--text-muted);">SPESIFIKASI HARDWARE</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 6px;">
+                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                                    <span style="font-size:0.75em; color:var(--text-muted);">vCPU</span>
+                                    <h4 id="det-vcpu" style="margin:2px 0 0 0; color:#fff;">-</h4>
+                                </div>
+                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                                    <span style="font-size:0.75em; color:var(--text-muted);">RAM</span>
+                                    <h4 id="det-ram" style="margin:2px 0 0 0; color:#fff;">-</h4>
+                                </div>
+                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                                    <span style="font-size:0.75em; color:var(--text-muted);">DISK</span>
+                                    <h4 id="det-disk" style="margin:2px 0 0 0; color:#fff;">-</h4>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -207,7 +210,7 @@
             </div>
         </div>
 
-        <!-- Modal Login Sederhana -->
+        <!-- MODAL LOGIN -->
         <div class="card hidden" id="login-card">
             <h2>Autentikasi Pengguna</h2>
             <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
@@ -219,13 +222,13 @@
     </div>
 
     <script>
-        // Masukkan URL & Anon Key Supabase milikmu di sini
         const SUPABASE_URL = "https://cewjmzsyxtqqefhvllvf.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_7Wfw8fIUWSS7AZ8Msk3ruw_Ek96AnQn";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUser = null;
         let activeServerIP = "";
+        let currentServerData = null;
 
         async function init() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -237,7 +240,6 @@
                 updateAuthUI();
             });
 
-            // Cek apakah URL sedang membuka halaman detail server (/server/slug)
             const pathSegments = window.location.pathname.split('/');
             if (pathSegments[1] === 'server' && pathSegments[2]) {
                 document.getElementById('view-home').classList.add('hidden');
@@ -308,33 +310,111 @@
                 return;
             }
 
+            currentServerData = data;
             document.getElementById('det-name').innerText = data.name;
+            document.getElementById('det-desc').innerText = data.description || "Tidak ada deskripsi.";
+            document.getElementById('det-join').innerText = data.join_method || "Community Server";
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
 
-            // Simulasi pengecekan status dasar
-            document.getElementById('det-version').innerText = "v1.0.4";
+            document.getElementById('det-vcpu').innerText = data.vcpu || "-";
+            document.getElementById('det-ram').innerText = data.ram || "-";
+            document.getElementById('det-disk').innerText = data.disk || "-";
+
             const badge = document.getElementById('det-status-badge');
             badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
+
+            // Jika pengguna yang login adalah pemilik server ini, tampilkan tombol Edit di beranda (atau beri opsi edit)
+            if (currentUser && currentUser.id === data.user_id) {
+                // Tambahkan tombol edit cepat di halaman detail
+                const headerCard = document.querySelector('#view-detail .header-card');
+                if (!document.getElementById('edit-btn-trigger')) {
+                    const editBtn = document.createElement('button');
+                    editBtn.id = 'edit-btn-trigger';
+                    editBtn.className = 'btn';
+                    editBtn.style.marginTop = '10px';
+                    editBtn.innerText = 'Edit Info Server';
+                    editBtn.onclick = () => populateEditForm(data);
+                    headerCard.querySelector('div').appendChild(editBtn);
+                }
+            }
         }
 
-        async function registerServer(e) {
+        function populateEditForm(data) {
+            window.location.href = '/?edit=' + data.slug;
+        }
+
+        async function saveServer(e) {
             e.preventDefault();
             if (!currentUser) return alert('Silakan login terlebih dahulu!');
 
+            const serverId = document.getElementById('edit-server-id').value;
             const name = document.getElementById('srv-name').value;
+            const description = document.getElementById('srv-desc').value;
             const ip = document.getElementById('srv-ip').value;
+            const join_method = document.getElementById('srv-join').value;
             const api_port = document.getElementById('srv-api').value;
             const admin_password = document.getElementById('srv-pass').value;
             const slug = document.getElementById('srv-slug').value;
+            const vcpu = document.getElementById('srv-vcpu').value;
+            const ram = document.getElementById('srv-ram').value;
+            const disk = document.getElementById('srv-disk').value;
 
-            const { error } = await supabaseClient.from('servers').insert([
-                { name, ip, api_port, admin_password, slug, user_id: currentUser.id }
-            ]);
+            if (serverId) {
+                // Update data server yang sudah ada
+                const { error } = await supabaseClient.from('servers').update({
+                    name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk
+                }).eq('id', serverId);
 
-            if (error) alert('Gagal: ' + error.message);
-            else { alert('Server berhasil didaftarkan!'); window.location.reload(); }
+                if (error) alert('Gagal memperbarui: ' + error.message);
+                else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
+            } else {
+                // Insert server baru
+                const { error } = await supabaseClient.from('servers').insert([
+                    { name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
+                ]);
+
+                if (error) alert('Gagal: ' + error.message);
+                else { alert('Server berhasil didaftarkan!'); window.location.reload(); }
+            }
         }
+
+        function resetForm() {
+            document.getElementById('server-form').reset();
+            document.getElementById('edit-server-id').value = "";
+            document.getElementById('form-title').innerText = "Daftarkan Server Baru";
+            document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        }
+
+        // Cek parameter query edit saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editSlug = urlParams.get('edit');
+            if (editSlug) {
+                setTimeout(async () => {
+                    const { data } = await supabaseClient.from('servers').select('*').eq('slug', editSlug).single();
+                    if (data) {
+                        document.getElementById('edit-server-id').value = data.id;
+                        document.getElementById('srv-name').value = data.name || '';
+                        document.getElementById('srv-desc').value = data.description || '';
+                        document.getElementById('srv-ip').value = data.ip || '';
+                        document.getElementById('srv-join').value = data.join_method || 'Community Server';
+                        document.getElementById('srv-api').value = data.api_port || '';
+                        document.getElementById('srv-pass').value = data.admin_password || '';
+                        document.getElementById('srv-slug').value = data.slug || '';
+                        document.getElementById('srv-vcpu').value = data.vcpu || '';
+                        document.getElementById('srv-ram').value = data.ram || '';
+                        document.getElementById('srv-disk').value = data.disk || '';
+
+                        document.getElementById('form-title').innerText = "Edit Informasi Server";
+                        document.getElementById('submit-btn').innerText = "Simpan Perubahan";
+                        document.getElementById('cancel-edit-btn').classList.remove('hidden');
+                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
+                    }
+                }, 1000);
+            }
+        });
 
         function copyIP() {
             navigator.clipboard.writeText(activeServerIP);
