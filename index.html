@@ -42,7 +42,7 @@
             color: var(--accent-pink);
         }
 
-        /* Banner Gaming Keren */
+        /* Banner Gaming Keren (Clickable ke Home) */
         .hero-banner {
             width: 100%;
             height: 160px;
@@ -59,6 +59,13 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hero-banner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+            border-color: var(--accent-pink);
         }
 
         .hero-banner::after {
@@ -164,12 +171,12 @@
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Daftar Pemain Online (Compact Grid Box dengan Hover) */
+        /* Styling Daftar Pemain Online (Compact & Neat Grid Box) */
         .players-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 10px;
-            margin-top: 12px;
+            margin-top: 8px;
         }
         .player-box {
             background-color: #100c17;
@@ -249,8 +256,8 @@
             <a href="/?view=about" class="nav-link" id="nav-about">Tentang</a>
         </div>
 
-        <!-- Banner Gaming Keren -->
-        <div class="hero-banner">
+        <!-- Banner Gaming Keren (Clickable ke Home) -->
+        <div class="hero-banner" onclick="window.location.href='/'">
             <h2 class="hero-subtitle">Dedicated Server Hub</h2>
             <h1 class="hero-title">PALWORLD INDONESIA</h1>
         </div>
@@ -288,73 +295,6 @@
                     <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
                 </div>
                 <div id="my-server-list">Memuat server Anda...</div>
-            </div>
-
-            <!-- MODAL POP-UP: TAMBAH / EDIT SERVER -->
-            <div class="modal-overlay hidden" id="register-modal">
-                <div class="modal-card">
-                    <div class="flex-between" style="margin-bottom: 15px;">
-                        <div class="section-title" id="form-title">Daftarkan Server Baru</div>
-                        <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="closeRegisterModal()">✕ Tutup</button>
-                    </div>
-
-                    <form id="server-form" onsubmit="saveServer(event)">
-                        <input type="hidden" id="edit-server-slug">
-                        
-                        <label>Nama Server</label>
-                        <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
-                        
-                        <label>Deskripsi Server</label>
-                        <textarea id="srv-desc" rows="3" placeholder="Jelajahi dunia Palworld bersama komunitas kami..."></textarea>
-                        
-                        <label>IP Address / Domain URL & Port Game</label>
-                        <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029 atau server.domain.com:28029" required>
-                        
-                        <label>Cara Bergabung</label>
-                        <select id="srv-join">
-                            <option value="Community Server (Cari di dalam game)">Community Server (Cari via Menu In-Game)</option>
-                            <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
-                        </select>
-
-                        <label>Password Server Game (Opsional)</label>
-                        <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
-
-                        <label>Link Komunitas / Discord (Opsional)</label>
-                        <input type="url" id="srv-discord" placeholder="https://discord.gg/kodeinvitasi">
-
-                        <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
-                        <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
-
-                        <label>Port REST API</label>
-                        <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
-
-                        <label>Password Admin (API)</label>
-                        <input type="password" id="srv-pass" placeholder="Password admin server" required>
-
-                        <label>Slug URL Unik (untuk URL publik)</label>
-                        <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
-
-                        <div style="margin: 15px 0; display: flex; align-items: center; gap: 12px; background: #100c17; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
-                            <input type="checkbox" id="srv-is-public" checked style="width: 20px; height: 20px; margin: 0; cursor: pointer;">
-                            <div>
-                                <label for="srv-is-public" style="cursor: pointer; color: #fff; font-size: 0.9em; text-transform: none; display: block; font-weight: 600;">Tampilkan di Daftar Public Server</label>
-                                <span style="font-size: 0.8em; color: var(--text-muted);">Jika dicentang, server Anda akan muncul di daftar Public Server yang dapat dilihat pengguna lain.</span>
-                            </div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                            <div><label>vCPU</label><input type="text" id="srv-vcpu" placeholder="3 vCPU"></div>
-                            <div><label>RAM</label><input type="text" id="srv-ram" placeholder="12 GB"></div>
-                            <div><label>Disk</label><input type="text" id="srv-disk" placeholder="60 GB SSD"></div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1; min-width: 200px;">Simpan & Daftarkan Server</button>
-                            <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
-                            <button type="button" class="btn btn-secondary" onclick="closeRegisterModal()">Batal</button>
-                        </div>
-                    </form>
-                </div>
             </div>
         </div>
 
@@ -408,9 +348,9 @@
                 </div>
             </div>
 
-            <!-- DAFTAR PEMAIN ONLINE -->
+            <!-- DAFTAR PEMAIN ONLINE (Jarak Judul & List Lebih Compact) -->
             <div class="card">
-                <div class="section-title" style="margin-bottom: 12px;">Daftar Pemain Online</div>
+                <div class="section-title" style="margin-bottom: 4px;">Daftar Pemain Online</div>
                 <div id="players-list-content" class="info-text">Memuat daftar pemain...</div>
             </div>
 
@@ -485,6 +425,73 @@
             </div>
         </div>
 
+        <!-- MODAL POP-UP: TAMBAH / EDIT SERVER (Global agar bisa diakses dari semua halaman) -->
+        <div class="modal-overlay hidden" id="register-modal">
+            <div class="modal-card">
+                <div class="flex-between" style="margin-bottom: 15px;">
+                    <div class="section-title" id="form-title">Daftarkan Server Baru</div>
+                    <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="closeRegisterModal()">✕ Tutup</button>
+                </div>
+
+                <form id="server-form" onsubmit="saveServer(event)">
+                    <input type="hidden" id="edit-server-slug">
+                    
+                    <label>Nama Server</label>
+                    <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
+                    
+                    <label>Deskripsi Server</label>
+                    <textarea id="srv-desc" rows="3" placeholder="Jelajahi dunia Palworld bersama komunitas kami..."></textarea>
+                    
+                    <label>IP Address / Domain URL & Port Game</label>
+                    <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029 atau server.domain.com:28029" required>
+                    
+                    <label>Cara Bergabung</label>
+                    <select id="srv-join">
+                        <option value="Community Server (Cari di dalam game)">Community Server (Cari via Menu In-Game)</option>
+                        <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
+                    </select>
+
+                    <label>Password Server Game (Opsional)</label>
+                    <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
+
+                    <label>Link Komunitas / Discord (Opsional)</label>
+                    <input type="url" id="srv-discord" placeholder="https://discord.gg/kodeinvitasi">
+
+                    <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
+                    <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
+
+                    <label>Port REST API</label>
+                    <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
+
+                    <label>Password Admin (API)</label>
+                    <input type="password" id="srv-pass" placeholder="Password admin server" required>
+
+                    <label>Slug URL Unik (untuk URL publik)</label>
+                    <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
+
+                    <div style="margin: 15px 0; display: flex; align-items: center; gap: 12px; background: #100c17; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
+                        <input type="checkbox" id="srv-is-public" checked style="width: 20px; height: 20px; margin: 0; cursor: pointer;">
+                        <div>
+                            <label for="srv-is-public" style="cursor: pointer; color: #fff; font-size: 0.9em; text-transform: none; display: block; font-weight: 600;">Tampilkan di Daftar Public Server</label>
+                            <span style="font-size: 0.8em; color: var(--text-muted);">Jika dicentang, server Anda akan muncul di daftar Public Server yang dapat dilihat pengguna lain.</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                        <div><label>vCPU</label><input type="text" id="srv-vcpu" placeholder="3 vCPU"></div>
+                        <div><label>RAM</label><input type="text" id="srv-ram" placeholder="12 GB"></div>
+                        <div><label>Disk</label><input type="text" id="srv-disk" placeholder="60 GB SSD"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1; min-width: 200px;">Simpan & Daftarkan Server</button>
+                        <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeRegisterModal()">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- MODAL LOGIN -->
         <div class="modal-overlay hidden" id="login-modal">
             <div class="modal-card">
@@ -543,6 +550,15 @@
                 document.getElementById('nav-home').classList.add('active');
                 fetchServers();
             }
+
+            // Jika ada parameter ?edit= di URL saat halaman dimuat
+            const editSlug = urlParams.get('edit');
+            if (editSlug) {
+                setTimeout(async () => {
+                    const { data } = await supabaseClient.from('servers').select('*').eq('slug', editSlug).single();
+                    if (data) populateAndOpenEditModal(data);
+                }, 800);
+            }
         }
 
         function updateAuthUI() {
@@ -595,6 +611,29 @@
         function closeRegisterModal() {
             document.getElementById('register-modal').classList.add('hidden');
             resetForm();
+        }
+
+        function populateAndOpenEditModal(data) {
+            document.getElementById('edit-server-slug').value = data.slug;
+            document.getElementById('srv-name').value = data.name || '';
+            document.getElementById('srv-desc').value = data.description || '';
+            document.getElementById('srv-ip').value = data.ip || '';
+            document.getElementById('srv-join').value = data.join_method || 'Community Server';
+            document.getElementById('srv-server-pass').value = data.server_password || '';
+            document.getElementById('srv-discord').value = data.discord_link || '';
+            document.getElementById('srv-support').value = data.support_link || '';
+            document.getElementById('srv-api').value = data.api_port || '';
+            document.getElementById('srv-pass').value = data.admin_password || '';
+            document.getElementById('srv-slug').value = data.slug || '';
+            document.getElementById('srv-is-public').checked = data.is_public !== false;
+            document.getElementById('srv-vcpu').value = data.vcpu || '';
+            document.getElementById('srv-ram').value = data.ram || '';
+            document.getElementById('srv-disk').value = data.disk || '';
+
+            document.getElementById('form-title').innerText = "Edit Informasi Server";
+            document.getElementById('submit-btn').innerText = "Simpan Perubahan";
+            document.getElementById('delete-server-btn').classList.remove('hidden');
+            openRegisterModal();
         }
 
         async function handleLogin() {
@@ -657,7 +696,7 @@
                         </div>
                         <div style="display: flex; gap: 6px; align-items: center;">
                             <button class="btn" style="padding: 6px 12px; font-size: 0.75em;" onclick="event.stopPropagation(); window.location.href='/server/${srv.slug}'">Status</button>
-                            ${currentUser && currentUser.id === srv.user_id ? `<button onclick="event.stopPropagation(); window.location.href='/?edit=${srv.slug}'" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.75em;">Edit</button>` : ''}
+                            ${currentUser && currentUser.id === srv.user_id ? `<button onclick="event.stopPropagation(); populateAndOpenEditModal(${JSON.stringify(srv).replace(/"/g, '&quot;')})" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.75em;">Edit</button>` : ''}
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.78em; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
@@ -764,7 +803,7 @@
                     editBtn.style.marginTop = '10px';
                     editBtn.style.marginRight = '8px';
                     editBtn.innerText = 'Edit Info Server';
-                    editBtn.onclick = () => window.location.href = '/?edit=' + data.slug;
+                    editBtn.onclick = () => populateAndOpenEditModal(cachedServerData);
                     headerCard.querySelector('div').appendChild(editBtn);
                 }
             }
@@ -795,7 +834,6 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
-                        // Menampilkan 16 digit pertama UID pemain
                         playersListContainer.innerHTML = `
                             <div class="players-grid">
                                 ${players.map(p => {
@@ -907,38 +945,6 @@
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
             document.getElementById('delete-server-btn').classList.add('hidden');
         }
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const editSlug = urlParams.get('edit');
-            if (editSlug) {
-                setTimeout(async () => {
-                    const { data } = await supabaseClient.from('servers').select('*').eq('slug', editSlug).single();
-                    if (data) {
-                        document.getElementById('edit-server-slug').value = data.slug;
-                        document.getElementById('srv-name').value = data.name || '';
-                        document.getElementById('srv-desc').value = data.description || '';
-                        document.getElementById('srv-ip').value = data.ip || '';
-                        document.getElementById('srv-join').value = data.join_method || 'Community Server';
-                        document.getElementById('srv-server-pass').value = data.server_password || '';
-                        document.getElementById('srv-discord').value = data.discord_link || '';
-                        document.getElementById('srv-support').value = data.support_link || '';
-                        document.getElementById('srv-api').value = data.api_port || '';
-                        document.getElementById('srv-pass').value = data.admin_password || '';
-                        document.getElementById('srv-slug').value = data.slug || '';
-                        document.getElementById('srv-is-public').checked = data.is_public !== false;
-                        document.getElementById('srv-vcpu').value = data.vcpu || '';
-                        document.getElementById('srv-ram').value = data.ram || '';
-                        document.getElementById('srv-disk').value = data.disk || '';
-
-                        document.getElementById('form-title').innerText = "Edit Informasi Server";
-                        document.getElementById('submit-btn').innerText = "Simpan Perubahan";
-                        document.getElementById('delete-server-btn').classList.add('hidden');
-                        openRegisterModal();
-                    }
-                }, 1000);
-            }
-        });
 
         function copyIP() {
             navigator.clipboard.writeText(activeServerIP);
