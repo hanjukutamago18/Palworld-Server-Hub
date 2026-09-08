@@ -171,12 +171,12 @@
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Daftar Pemain Online (Sangat Compact & Rapat ke Judul) */
+        /* Styling Daftar Pemain Online (Sangat Rapat dengan Judulnya) */
         .players-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: 1fr;
             gap: 8px;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .player-box {
             background-color: #100c17;
@@ -348,13 +348,8 @@
                 </div>
             </div>
 
-            <!-- DAFTAR PEMAIN ONLINE (Padding Card & Jarak Diperkecil Maksimal) -->
-            <div class="card" style="padding: 16px 20px;">
-                <div class="section-title" style="margin-bottom: 0;">Daftar Pemain Online</div>
-                <div id="players-list-content" style="margin-top: 4px;">Memuat daftar pemain...</div>
-            </div>
-
             <div class="grid-layout">
+                <!-- Kolom Kiri: Tentang Server & Daftar Pemain Online (Selaras Atas-Bawah) -->
                 <div>
                     <div class="card">
                         <div class="section-title" style="margin-bottom: 12px;">Tentang Server</div>
@@ -381,9 +376,17 @@
                             </div>
                         </div>
                     </div>
-                    <a href="/" class="btn btn-secondary" style="width: 100%;">← Kembali ke Beranda</a>
+
+                    <!-- DAFTAR PEMAIN ONLINE (Dipindah tepat di bawah Tentang Server pada kolom kiri) -->
+                    <div class="card" style="padding: 16px 20px;">
+                        <div class="section-title" style="margin-bottom: 0;">Daftar Pemain Online</div>
+                        <div id="players-list-content" style="margin-top: 4px;">Memuat daftar pemain...</div>
+                    </div>
+
+                    <a href="/" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">← Kembali ke Beranda</a>
                 </div>
 
+                <!-- Kolom Kanan: Koneksi Server, Discord, & Dukungan -->
                 <div>
                     <!-- KONEKSI & PASSWORD -->
                     <div class="card">
@@ -912,7 +915,7 @@
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
-                const { error } = await supabaseClient.from('servers'].insert([
+                const { error } = await supabaseClient.from('servers').insert([
                     { name, description, ip, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
