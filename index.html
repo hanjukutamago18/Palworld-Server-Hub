@@ -171,12 +171,12 @@
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Daftar Pemain Online (Sangat Rapat dengan Judulnya) */
+        /* Styling Daftar Pemain Online (Jarak pas & rapi di bawah judul) */
         .players-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
-            margin-top: 6px;
+            gap: 10px;
+            margin-top: 12px;
         }
         .player-box {
             background-color: #100c17;
@@ -377,10 +377,10 @@
                         </div>
                     </div>
 
-                    <!-- DAFTAR PEMAIN ONLINE (Dipindah tepat di bawah Tentang Server pada kolom kiri) -->
-                    <div class="card" style="padding: 16px 20px;">
-                        <div class="section-title" style="margin-bottom: 0;">Daftar Pemain Online</div>
-                        <div id="players-list-content" style="margin-top: 4px;">Memuat daftar pemain...</div>
+                    <!-- DAFTAR PEMAIN ONLINE (Jarak Judul & Box Diberi Ruang Nyaman / Tidak Terlalu Dekat) -->
+                    <div class="card">
+                        <div class="section-title">Daftar Pemain Online</div>
+                        <div id="players-list-content">Memuat daftar pemain...</div>
                     </div>
 
                     <a href="/" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">← Kembali ke Beranda</a>
@@ -428,7 +428,7 @@
             </div>
         </div>
 
-        <!-- MODAL POP-UP: TAMBAH / EDIT SERVER (Global agar bisa diakses dari semua halaman) -->
+        <!-- MODAL POP-UP: TAMBAH / EDIT SERVER -->
         <div class="modal-overlay hidden" id="register-modal">
             <div class="modal-card">
                 <div class="flex-between" style="margin-bottom: 15px;">
@@ -852,7 +852,7 @@
                             </div>
                         `;
                     } else {
-                        playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-top: 4px;">Belum ada pemain yang online saat ini.</div>`;
+                        playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-top: 12px;">Belum ada pemain yang online saat ini.</div>`;
                     }
                 } else {
                     throw new Error("Server offline");
@@ -862,7 +862,7 @@
                 badge.innerHTML = `<div class="dot"></div><span>OFFLINE</span>`;
                 document.getElementById('stat-version').innerText = "Offline";
                 document.getElementById('stat-players').innerText = "0 / 32";
-                playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-top: 4px;">Server sedang offline atau gagal terhubung ke REST API.</div>`;
+                playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-top: 12px;">Server sedang offline atau gagal terhubung ke REST API.</div>`;
             }
         }
 
