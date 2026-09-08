@@ -405,7 +405,7 @@
             e.preventDefault();
             if (!currentUser) return alert('Silakan login terlebih dahulu!');
 
-            const editSlug = document.getElementById('edit-server-slug').value;
+            const serverId = document.getElementById('edit-server-slug').value; // Ini sekarang menyimpan ID baris database
             const name = document.getElementById('srv-name').value;
             const description = document.getElementById('srv-desc').value;
             const ip = document.getElementById('srv-ip').value;
@@ -419,10 +419,11 @@
             const ram = document.getElementById('srv-ram').value;
             const disk = document.getElementById('srv-disk').value;
 
-            if (editSlug) {
+            if (serverId) {
+                // Update berdasarkan ctid / row identifier atau slug asli
                 const { error } = await supabaseClient.from('servers').update({
                     name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk
-                }).eq('slug', editSlug);
+                }).eq('slug', serverId); // Menggunakan slug awal sebelum diubah
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
@@ -435,6 +436,37 @@
                 else { alert('Server berhasil didaftarkan!'); window.location.reload(); }
             }
         }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editSlug = urlParams.get('edit');
+            if (editSlug) {
+                setTimeout(async () => {
+                    const { data } = await supabaseClient.from('servers').select('*').eq('slug', editSlug).single();
+                    if (data) {
+                        document.getElementById('edit-server-slug').value = data.slug; // Simpan slug asli untuk pencarian update
+                        document.getElementById('srv-name').value = data.name || '';
+                        document.getElementById('srv-desc').value = data.description || '';
+                        document.getElementById('srv-ip').value = data.ip || '';
+                        document.getElementById('srv-join').value = data.join_method || 'Community Server (Cari di dalam game)';
+                        document.getElementById('srv-server-pass').value = data.server_password || '';
+                        document.getElementById('srv-support').value = data.support_link || '';
+                        document.getElementById('srv-api').value = data.api_port || '';
+                        document.getElementById('srv-pass').value = data.admin_password || '';
+                        document.getElementById('srv-slug').value = data.slug || '';
+                        document.getElementById('srv-vcpu').value = data.vcpu || '';
+                        document.getElementById('srv-ram').value = data.ram || '';
+                        document.getElementById('srv-disk').value = data.disk || '';
+
+                        document.getElementById('form-title').innerText = "Edit Informasi Server";
+                        document.getElementById('submit-btn').innerText = "Simpan Perubahan";
+                        document.getElementById('delete-server-btn').classList.remove('hidden');
+                        document.getElementById('cancel-edit-btn').classList.remove('hidden');
+                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
+                    }
+                }, 1000);
+            }
+        });
 
         async function deleteServer() {
             const editSlug = document.getElementById('edit-server-slug').value;
