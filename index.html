@@ -134,14 +134,22 @@
                         <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
                     </select>
 
-                    <label>Password Server Game (Opsional - Kosongkan jika tanpa password)</label>
+                    <label>Password Server Game (Opsional)</label>
                     <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
 
                     <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
                     <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
 
-                    <label>Port REST API</label>
-                    <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label>Port REST API</label>
+                            <input type="text" id="srv-api" placeholder="28045" required>
+                        </div>
+                        <div>
+                            <label>Port RCON</label>
+                            <input type="text" id="srv-rcon" placeholder="25575">
+                        </div>
+                    </div>
 
                     <label>Password Admin (RCON/API)</label>
                     <input type="password" id="srv-pass" placeholder="Password admin server" required>
@@ -160,11 +168,11 @@
                         </div>
                         <div>
                             <label>Disk</label>
-                            <input type="text" id="srv-disk" placeholder="50 GB SSD">
+                            <input type="text" id="srv-disk" placeholder="60 GB SSD">
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
                         <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1;">Simpan & Daftarkan Server</button>
                         <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
                         <button type="button" class="btn hidden" id="cancel-edit-btn" onclick="resetForm()" style="background:transparent; color:var(--text-muted);">Batal</button>
@@ -186,7 +194,7 @@
                 </div>
             </div>
 
-            <!-- WIDGET STATISTIK LIVE ALA PALBOT -->
+            <!-- WIDGET STATISTIK LIVE LENGKAP -->
             <div class="card">
                 <div class="flex-between" style="margin-bottom: 10px;">
                     <div class="section-title" style="margin: 0;">Status & Statistik Live</div>
@@ -203,15 +211,19 @@
                         <div class="stat-value" id="stat-version">-</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-label">Days</div>
-                        <div class="stat-value" id="stat-days">-</div>
+                        <div class="stat-label">Uptime</div>
+                        <div class="stat-value" id="stat-uptime">-</div>
                     </div>
                 </div>
 
-                <div style="margin-top: 12px;">
-                    <div class="stat-label" style="margin-bottom: 4px;">World GUID</div>
-                    <div class="guid-box" style="font-size: 0.9em; margin: 0; padding: 8px 12px;">
-                        <span id="stat-guid" style="color: var(--text-muted);">-</span>
+                <div class="stats-grid" style="margin-top: 12px;">
+                    <div class="stat-box">
+                        <div class="stat-label">Latency (Ping)</div>
+                        <div class="stat-value" id="stat-latency">-</div>
+                    </div>
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <div class="stat-label">RCON Status</div>
+                        <div class="stat-value" id="stat-rcon">-</div>
                     </div>
                 </div>
             </div>
@@ -387,12 +399,10 @@
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
 
-            // Render Spesifikasi Hardware
             document.getElementById('det-vcpu').innerText = data.vcpu || "-";
             document.getElementById('det-ram').innerText = data.ram || "-";
             document.getElementById('det-disk').innerText = data.disk || "-";
 
-            // Render Password Server (Jika ada isinya)
             if (data.server_password && data.server_password.trim() !== "") {
                 plainServerPassword = data.server_password;
                 document.getElementById('password-container').classList.remove('hidden');
@@ -401,16 +411,12 @@
                 document.getElementById('password-container').classList.add('hidden');
             }
 
-            // Render Tombol Support / Donasi
             if (data.support_link && data.support_link.trim() !== "") {
                 document.getElementById('det-support-link').href = data.support_link;
                 document.getElementById('support-card').classList.remove('hidden');
             } else {
                 document.getElementById('support-card').classList.add('hidden');
             }
-
-            const badge = document.getElementById('det-status-badge');
-            badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
 
             if (currentUser && currentUser.id === data.user_id) {
                 const headerCard = document.querySelector('#view-detail .header-card');
@@ -426,7 +432,6 @@
                 }
             }
 
-            // Panggil API untuk mengambil data live stats (Players, Version, Days, GUID)
             loadLiveStats();
         }
 
@@ -437,17 +442,17 @@
             badge.innerHTML = `<div class="dot"></div><span>MENGECEK...</span>`;
 
             try {
-                const res = await fetch(`/api/status?ip=${encodeURIComponent(cachedServerData.ip)}&api_port=${encodeURIComponent(cachedServerData.api_port)}&password=${encodeURIComponent(cachedServerData.admin_password)}`);
+                const res = await fetch(`/api/status?ip=${encodeURIComponent(cachedServerData.ip)}&api_port=${encodeURIComponent(cachedServerData.api_port)}&rcon_port=${encodeURIComponent(cachedServerData.rcon_port || '')}&password=${encodeURIComponent(cachedServerData.admin_password)}`);
                 const json = await res.json();
 
                 if (json.online && json.info) {
                     badge.className = "status-badge";
                     badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
 
-                    // Menangkap berbagai kemungkinan nama properti dari API Palworld
                     document.getElementById('stat-version').innerText = json.info.version || "-";
-                    document.getElementById('stat-days').innerText = json.info.days ?? json.info.game_days ?? json.info.day ?? "0";
-                    document.getElementById('stat-guid').innerText = json.info.world_guid ?? json.info.worldGuid ?? json.info.guid ?? "Tidak tersedia dari API";
+                    document.getElementById('stat-latency').innerText = `${json.latency} ms`;
+                    document.getElementById('stat-uptime').innerText = `${Math.floor(json.uptime / 60)} min`;
+                    document.getElementById('stat-rcon').innerText = json.rconConnected ? "Terhubung (RCON Aktif)" : "Tidak Aktif / Port Tertutup";
 
                     const playerCount = json.players && json.players.players ? json.players.players.length : 0;
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
@@ -458,8 +463,9 @@
                 badge.className = "status-badge offline";
                 badge.innerHTML = `<div class="dot"></div><span>OFFLINE</span>`;
                 document.getElementById('stat-version').innerText = "Offline";
-                document.getElementById('stat-days').innerText = "-";
-                document.getElementById('stat-guid').innerText = "Tidak dapat terhubung ke REST API";
+                document.getElementById('stat-latency').innerText = "-";
+                document.getElementById('stat-uptime').innerText = "-";
+                document.getElementById('stat-rcon').innerText = "Offline";
                 document.getElementById('stat-players').innerText = "0 / 32";
             }
         }
@@ -490,6 +496,7 @@
             const server_password = document.getElementById('srv-server-pass').value;
             const support_link = document.getElementById('srv-support').value;
             const api_port = document.getElementById('srv-api').value;
+            const rcon_port = document.getElementById('srv-rcon').value;
             const admin_password = document.getElementById('srv-pass').value;
             const slug = document.getElementById('srv-slug').value;
             const vcpu = document.getElementById('srv-vcpu').value;
@@ -498,14 +505,14 @@
 
             if (serverId) {
                 const { error } = await supabaseClient.from('servers').update({
-                    name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk
+                    name, description, ip, join_method, server_password, support_link, api_port, rcon_port, admin_password, slug, vcpu, ram, disk
                 }).eq('slug', serverId);
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
                 const { error } = await supabaseClient.from('servers').insert([
-                    { name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
+                    { name, description, ip, join_method, server_password, support_link, api_port, rcon_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
                 if (error) alert('Gagal: ' + error.message);
@@ -552,6 +559,7 @@
                         document.getElementById('srv-server-pass').value = data.server_password || '';
                         document.getElementById('srv-support').value = data.support_link || '';
                         document.getElementById('srv-api').value = data.api_port || '';
+                        document.getElementById('srv-rcon').value = data.rcon_port || '';
                         document.getElementById('srv-pass').value = data.admin_password || '';
                         document.getElementById('srv-slug').value = data.slug || '';
                         document.getElementById('srv-vcpu').value = data.vcpu || '';
