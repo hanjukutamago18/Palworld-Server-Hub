@@ -84,14 +84,14 @@
         
         .status-badge {
             background-color: rgba(163, 255, 71, 0.1); color: var(--accent-green);
-            padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 0.85em;
-            display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
+            padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8em;
+            display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(163, 255, 71, 0.3);
         }
         .status-badge.offline { background-color: rgba(255, 71, 71, 0.1); color: #ff4747; border-color: rgba(255, 71, 71, 0.3); }
         .status-badge.checking { background-color: rgba(255, 159, 67, 0.1); color: var(--accent-orange); border-color: rgba(255, 159, 67, 0.3); }
-        .status-badge .dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
-        .status-badge.offline .dot { background-color: #ff4747; box-shadow: 0 0 8px #ff4747; }
-        .status-badge.checking .dot { background-color: var(--accent-orange); box-shadow: 0 0 8px var(--accent-orange); }
+        .status-badge .dot { width: 7px; height: 7px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 6px var(--accent-green); }
+        .status-badge.offline .dot { background-color: #ff4747; box-shadow: 0 0 6px #ff4747; }
+        .status-badge.checking .dot { background-color: var(--accent-orange); box-shadow: 0 0 6px var(--accent-orange); }
 
         .grid-layout { display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 20px; }
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
@@ -116,9 +116,9 @@
 
         .btn {
             background: var(--accent-green); color: #000; border: none;
-            padding: 11px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;
-            font-size: 0.9em; text-decoration: none; transition: 0.2s; display: inline-flex;
-            align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 9px 18px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            font-size: 0.85em; text-decoration: none; transition: 0.2s; display: inline-flex;
+            align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .btn:hover { opacity: 0.85; transform: translateY(-1px); }
         .btn-pink { background: var(--accent-pink); color: #fff; }
@@ -143,18 +143,18 @@
             border-color: var(--accent-pink); color: #fff;
         }
 
-        /* List Server dengan Rounded Box & Efek Hover Presisi */
+        /* List Server Lebih Rapi dan Compact */
         .server-item {
             background-color: #100c17;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 16px 20px;
-            margin-bottom: 12px;
+            padding: 12px 18px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
             transition: all 0.2s ease;
         }
         .server-item:last-child {
@@ -253,7 +253,7 @@
 
             <!-- KONTEN TAB: PUBLIC SERVER -->
             <div class="card" id="tab-content-public">
-                <div class="flex-between" style="margin-bottom: 14px;">
+                <div class="flex-between" style="margin-bottom: 12px;">
                     <div class="section-title">Public Server</div>
                 </div>
                 <div id="public-server-list" class="info-text">Memuat daftar public server...</div>
@@ -261,7 +261,7 @@
 
             <!-- KONTEN TAB: SERVER SAYA -->
             <div class="card hidden" id="tab-content-my">
-                <div class="flex-between" style="margin-bottom: 14px;">
+                <div class="flex-between" style="margin-bottom: 12px;">
                     <div class="section-title">Server Saya</div>
                     <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
                 </div>
@@ -589,29 +589,29 @@
 
         function renderServerItem(srv, isOwner) {
             const statusLabel = isOwner ? (srv.is_public === false 
-                ? '<span style="font-size: 0.75em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255,159,67,0.3); margin-left: 8px;">Private</span>' 
-                : '<span style="font-size: 0.75em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(163,255,71,0.3); margin-left: 8px;">Public</span>') : '';
+                ? '<span style="font-size: 0.7em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,159,67,0.3); margin-left: 6px;">Private</span>' 
+                : '<span style="font-size: 0.7em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(163,255,71,0.3); margin-left: 6px;">Public</span>') : '';
 
             return `
                 <div class="server-item">
                     <div style="flex: 1; min-width: 240px;">
-                        <div style="display: flex; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
-                            <strong style="color: #fff; font-size: 1.15em;">${srv.name}</strong> ${statusLabel}
-                            <div class="status-badge checking" id="badge-${srv.slug}" style="padding: 3px 10px; font-size: 0.75em; margin-left: auto;">
+                        <div style="display: flex; align-items: center; margin-bottom: 3px; flex-wrap: wrap; gap: 6px;">
+                            <strong style="color: #fff; font-size: 1.05em;">${srv.name}</strong> ${statusLabel}
+                            <div class="status-badge checking" id="badge-${srv.slug}" style="padding: 2px 8px; font-size: 0.7em; margin-left: auto;">
                                 <div class="dot"></div><span id="badge-text-${srv.slug}">MEMERIKSA...</span>
                             </div>
                         </div>
-                        <div style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; font-family: monospace;">
+                        <div style="font-size: 0.8em; color: var(--text-muted); margin-bottom: 5px; font-family: monospace;">
                             📍 ${srv.ip}
                         </div>
-                        <div style="display: flex; gap: 15px; font-size: 0.8em; color: var(--text-muted); flex-wrap: wrap;">
+                        <div style="display: flex; gap: 12px; font-size: 0.75em; color: var(--text-muted); flex-wrap: wrap;">
                             <span>👥 Pemain: <strong id="players-${srv.slug}" style="color: #fff;">- / 32</strong></span>
                             <span>⚙️ Versi: <strong id="version-${srv.slug}" style="color: #fff;">-</strong></span>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <a href="/server/${srv.slug}" class="btn" style="padding: 8px 16px; font-size: 0.85em;">Status</a>
-                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 8px 16px; font-size: 0.85em;">Edit</a>` : ''}
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <a href="/server/${srv.slug}" class="btn" style="padding: 6px 14px; font-size: 0.8em;">Status</a>
+                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 6px 14px; font-size: 0.8em;">Edit</a>` : ''}
                     </div>
                 </div>
             `;
