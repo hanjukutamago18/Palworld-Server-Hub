@@ -380,11 +380,12 @@
         }
 
         async function deleteServer() {
-            const serverId = document.getElementById('edit-server-id').value;
-            if (!serverId) return;
+            const slug = document.getElementById('srv-slug').value;
+            if (!slug) return alert('Slug server tidak ditemukan!');
 
             if (confirm("Apakah kamu yakin ingin menghapus server ini secara permanen?")) {
-                const { error } = await supabaseClient.from('servers').delete().eq('id', serverId);
+                const { error } = await supabaseClient.from('servers').delete().eq('slug', slug);
+                
                 if (error) {
                     alert('Gagal menghapus server: ' + error.message);
                 } else {
