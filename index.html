@@ -56,7 +56,7 @@
 
         .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; white-space: pre-line; }
 
-        .ip-box, .guid-box {
+        .ip-box {
             background-color: #100c17; border: 1px solid var(--border-color);
             padding: 12px 16px; border-radius: 8px; font-family: monospace;
             font-size: 1.05em; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
@@ -140,18 +140,10 @@
                     <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
                     <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div>
-                            <label>Port REST API</label>
-                            <input type="text" id="srv-api" placeholder="28045" required>
-                        </div>
-                        <div>
-                            <label>Port RCON</label>
-                            <input type="text" id="srv-rcon" placeholder="25575">
-                        </div>
-                    </div>
+                    <label>Port REST API</label>
+                    <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
 
-                    <label>Password Admin (RCON/API)</label>
+                    <label>Password Admin (API)</label>
                     <input type="password" id="srv-pass" placeholder="Password admin server" required>
 
                     <label>Slug URL Unik (untuk URL publik)</label>
@@ -160,11 +152,11 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                         <div>
                             <label>vCPU</label>
-                            <input type="text" id="srv-vcpu" placeholder="2 vCPU">
+                            <input type="text" id="srv-vcpu" placeholder="3 vCPU">
                         </div>
                         <div>
                             <label>RAM</label>
-                            <input type="text" id="srv-ram" placeholder="8 GB">
+                            <input type="text" id="srv-ram" placeholder="12 GB">
                         </div>
                         <div>
                             <label>Disk</label>
@@ -194,36 +186,21 @@
                 </div>
             </div>
 
-            <!-- WIDGET STATISTIK LIVE LENGKAP -->
+            <!-- WIDGET STATISTIK LIVE BERSIH (REST API) -->
             <div class="card">
                 <div class="flex-between" style="margin-bottom: 10px;">
                     <div class="section-title" style="margin: 0;">Status & Statistik Live</div>
                     <button class="btn" style="padding: 4px 10px; font-size: 0.75em;" onclick="loadLiveStats()">🔄 Refresh</button>
                 </div>
                 
-                <div class="stats-grid">
+                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
                     <div class="stat-box">
-                        <div class="stat-label">Players</div>
-                        <div class="stat-value" id="stat-players">- / -</div>
+                        <div class="stat-label">Players Online</div>
+                        <div class="stat-value" id="stat-players">- / 32</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-label">Version</div>
+                        <div class="stat-label">Server Version</div>
                         <div class="stat-value" id="stat-version">-</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Uptime</div>
-                        <div class="stat-value" id="stat-uptime">-</div>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="margin-top: 12px;">
-                    <div class="stat-box">
-                        <div class="stat-label">Latency (Ping)</div>
-                        <div class="stat-value" id="stat-latency">-</div>
-                    </div>
-                    <div class="stat-box" style="grid-column: span 2;">
-                        <div class="stat-label">RCON Status</div>
-                        <div class="stat-value" id="stat-rcon">-</div>
                     </div>
                 </div>
             </div>
@@ -442,7 +419,7 @@
             badge.innerHTML = `<div class="dot"></div><span>MENGECEK...</span>`;
 
             try {
-                const res = await fetch(`/api/status?ip=${encodeURIComponent(cachedServerData.ip)}&api_port=${encodeURIComponent(cachedServerData.api_port)}&rcon_port=${encodeURIComponent(cachedServerData.rcon_port || '')}&password=${encodeURIComponent(cachedServerData.admin_password)}`);
+                const res = await fetch(`/api/status?ip=${encodeURIComponent(cachedServerData.ip)}&api_port=${encodeURIComponent(cachedServerData.api_port)}&password=${encodeURIComponent(cachedServerData.admin_password)}`);
                 const json = await res.json();
 
                 if (json.online && json.info) {
@@ -450,10 +427,6 @@
                     badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
 
                     document.getElementById('stat-version').innerText = json.info.version || "-";
-                    document.getElementById('stat-latency').innerText = `${json.latency} ms`;
-                    document.getElementById('stat-uptime').innerText = `${Math.floor(json.uptime / 60)} min`;
-                    document.getElementById('stat-rcon').innerText = json.rconConnected ? "Terhubung (RCON Aktif)" : "Tidak Aktif / Port Tertutup";
-
                     const playerCount = json.players && json.players.players ? json.players.players.length : 0;
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
                 } else {
@@ -463,9 +436,6 @@
                 badge.className = "status-badge offline";
                 badge.innerHTML = `<div class="dot"></div><span>OFFLINE</span>`;
                 document.getElementById('stat-version').innerText = "Offline";
-                document.getElementById('stat-latency').innerText = "-";
-                document.getElementById('stat-uptime').innerText = "-";
-                document.getElementById('stat-rcon').innerText = "Offline";
                 document.getElementById('stat-players').innerText = "0 / 32";
             }
         }
@@ -496,7 +466,6 @@
             const server_password = document.getElementById('srv-server-pass').value;
             const support_link = document.getElementById('srv-support').value;
             const api_port = document.getElementById('srv-api').value;
-            const rcon_port = document.getElementById('srv-rcon').value;
             const admin_password = document.getElementById('srv-pass').value;
             const slug = document.getElementById('srv-slug').value;
             const vcpu = document.getElementById('srv-vcpu').value;
@@ -505,14 +474,14 @@
 
             if (serverId) {
                 const { error } = await supabaseClient.from('servers').update({
-                    name, description, ip, join_method, server_password, support_link, api_port, rcon_port, admin_password, slug, vcpu, ram, disk
+                    name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk
                 }).eq('slug', serverId);
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
                 const { error } = await supabaseClient.from('servers').insert([
-                    { name, description, ip, join_method, server_password, support_link, api_port, rcon_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
+                    { name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
                 if (error) alert('Gagal: ' + error.message);
@@ -559,7 +528,6 @@
                         document.getElementById('srv-server-pass').value = data.server_password || '';
                         document.getElementById('srv-support').value = data.support_link || '';
                         document.getElementById('srv-api').value = data.api_port || '';
-                        document.getElementById('srv-rcon').value = data.rcon_port || '';
                         document.getElementById('srv-pass').value = data.admin_password || '';
                         document.getElementById('srv-slug').value = data.slug || '';
                         document.getElementById('srv-vcpu').value = data.vcpu || '';
