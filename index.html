@@ -122,7 +122,31 @@
         .btn-pink { background: var(--accent-pink); color: #fff; }
         .btn-danger { background: #ff4747; color: #fff; }
         
-        /* Tombol Donasi Dibuat Proporsional & Rapi di Tengah */
+        /* Tombol Navigasi Tab */
+        .btn-tab {
+            background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color);
+            padding: 10px 20px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-tab.active {
+            background: var(--accent-pink); color: #fff; border-color: var(--accent-pink);
+            box-shadow: 0 4px 12px rgba(255, 42, 122, 0.3);
+        }
+
+        /* Styling Modal Pop-Up Overlay */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(12, 9, 18, 0.85); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+            padding: 20px; box-sizing: border-box; overflow-y: auto;
+        }
+        .modal-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 28px; width: 100%; max-width: 650px;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+        }
+
         .btn-support { 
             background: var(--accent-orange); 
             color: #000; 
@@ -138,10 +162,7 @@
             text-decoration: none;
             transition: 0.2s;
         }
-        .btn-support:hover { 
-            opacity: 0.85; 
-            transform: translateY(-1px); 
-        }
+        .btn-support:hover { opacity: 0.85; transform: translateY(-1px); }
 
         .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
 
@@ -184,7 +205,7 @@
 
         <!-- BERANDA -->
         <div id="view-home">
-            <div class="card flex-between">
+            <div class="card header-card">
                 <div>
                     <h2>Palworld Community Platform</h2>
                     <h1>Daftar Server Publik</h1>
@@ -194,96 +215,103 @@
                 </div>
             </div>
 
-            <!-- BAGIAN: SERVER SAYA (Hanya muncul jika login) -->
-            <div class="card hidden" id="my-servers-card">
-                <div class="flex-between" style="margin-bottom: 15px;">
-                    <div class="section-title" style="margin: 0;">Server Saya</div>
-                    <button class="btn btn-pink" onclick="toggleRegisterForm()">+ Tambah Server Baru</button>
+            <!-- TOMBOL NAVIGASI TAB DI ATAS DAFTAR SERVER -->
+            <div class="card" style="padding: 16px 24px; margin-bottom: 20px;">
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn-tab active" id="tab-btn-public" onclick="switchTab('public')">🌐 Public Server</button>
+                    <button class="btn-tab hidden" id="tab-btn-my" onclick="switchTab('my')">💻 Server Saya</button>
                 </div>
-                <div id="my-server-list" class="info-text">Memuat server Anda...</div>
             </div>
 
-            <!-- BAGIAN: PUBLIC SERVER -->
-            <div class="card">
+            <!-- KONTEN TAB: PUBLIC SERVER -->
+            <div class="card" id="tab-content-public">
                 <div class="flex-between" style="margin-bottom: 15px;">
                     <div class="section-title" style="margin: 0;">Public Server</div>
-                    <div id="add-server-btn-container" class="hidden">
-                        <!-- Tombol tambah server alternatif jika belum login / belum ada card my servers -->
-                    </div>
                 </div>
                 <div id="public-server-list" class="info-text">Memuat daftar public server...</div>
             </div>
 
-            <!-- FORM TAMBAH / EDIT SERVER -->
-            <div class="card hidden" id="register-card">
+            <!-- KONTEN TAB: SERVER SAYA -->
+            <div class="card hidden" id="tab-content-my">
                 <div class="flex-between" style="margin-bottom: 15px;">
-                    <div class="section-title" id="form-title" style="margin: 0;">Daftarkan Server Baru</div>
-                    <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="toggleRegisterForm()">✕ Tutup</button>
+                    <div class="section-title" style="margin: 0;">Server Saya</div>
+                    <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
                 </div>
+                <div id="my-server-list" class="info-text">Memuat server Anda...</div>
+            </div>
 
-                <form id="server-form" onsubmit="saveServer(event)">
-                    <input type="hidden" id="edit-server-slug">
-                    
-                    <label>Nama Server</label>
-                    <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
-                    
-                    <label>Deskripsi Server</label>
-                    <textarea id="srv-desc" rows="3" placeholder="Jelajahi dunia Palworld bersama komunitas kami..."></textarea>
-                    
-                    <label>IP Address / Domain URL & Port Game</label>
-                    <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029 atau server.domain.com:28029" required>
-                    
-                    <label>Cara Bergabung</label>
-                    <select id="srv-join">
-                        <option value="Community Server (Cari di dalam game)">Community Server (Cari via Menu In-Game)</option>
-                        <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
-                    </select>
-
-                    <label>Password Server Game (Opsional)</label>
-                    <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
-
-                    <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
-                    <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
-
-                    <label>Port REST API</label>
-                    <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
-
-                    <label>Password Admin (API)</label>
-                    <input type="password" id="srv-pass" placeholder="Password admin server" required>
-
-                    <label>Slug URL Unik (untuk URL publik)</label>
-                    <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
-
-                    <!-- Opsi Publik / Privasi Server -->
-                    <div style="margin: 15px 0; display: flex; align-items: center; gap: 12px; background: #100c17; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
-                        <input type="checkbox" id="srv-is-public" checked style="width: 20px; height: 20px; margin: 0; cursor: pointer;">
-                        <div>
-                            <label for="srv-is-public" style="cursor: pointer; color: #fff; font-size: 0.9em; text-transform: none; display: block; font-weight: 600;">Tampilkan di Daftar Public Server</label>
-                            <span style="font-size: 0.8em; color: var(--text-muted);">Jika dicentang, server Anda akan muncul di daftar Public Server yang dapat dilihat pengguna lain.</span>
-                        </div>
+            <!-- MODAL POP-UP: TAMBAH / EDIT SERVER -->
+            <div class="modal-overlay hidden" id="register-modal">
+                <div class="modal-card">
+                    <div class="flex-between" style="margin-bottom: 15px;">
+                        <div class="section-title" id="form-title" style="margin: 0;">Daftarkan Server Baru</div>
+                        <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="closeRegisterModal()">✕ Tutup</button>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                        <div>
-                            <label>vCPU</label>
-                            <input type="text" id="srv-vcpu" placeholder="3 vCPU">
-                        </div>
-                        <div>
-                            <label>RAM</label>
-                            <input type="text" id="srv-ram" placeholder="12 GB">
-                        </div>
-                        <div>
-                            <label>Disk</label>
-                            <input type="text" id="srv-disk" placeholder="60 GB SSD">
-                        </div>
-                    </div>
+                    <form id="server-form" onsubmit="saveServer(event)">
+                        <input type="hidden" id="edit-server-slug">
+                        
+                        <label>Nama Server</label>
+                        <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
+                        
+                        <label>Deskripsi Server</label>
+                        <textarea id="srv-desc" rows="3" placeholder="Jelajahi dunia Palworld bersama komunitas kami..."></textarea>
+                        
+                        <label>IP Address / Domain URL & Port Game</label>
+                        <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029 atau server.domain.com:28029" required>
+                        
+                        <label>Cara Bergabung</label>
+                        <select id="srv-join">
+                            <option value="Community Server (Cari di dalam game)">Community Server (Cari via Menu In-Game)</option>
+                            <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
+                        </select>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1; min-width: 200px;">Simpan & Daftarkan Server</button>
-                        <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
-                        <button type="button" class="btn btn-secondary hidden" id="cancel-edit-btn" onclick="resetForm()">Batal</button>
-                    </div>
-                </form>
+                        <label>Password Server Game (Opsional)</label>
+                        <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
+
+                        <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
+                        <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
+
+                        <label>Port REST API</label>
+                        <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
+
+                        <label>Password Admin (API)</label>
+                        <input type="password" id="srv-pass" placeholder="Password admin server" required>
+
+                        <label>Slug URL Unik (untuk URL publik)</label>
+                        <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
+
+                        <!-- Opsi Publik / Privasi Server -->
+                        <div style="margin: 15px 0; display: flex; align-items: center; gap: 12px; background: #100c17; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
+                            <input type="checkbox" id="srv-is-public" checked style="width: 20px; height: 20px; margin: 0; cursor: pointer;">
+                            <div>
+                                <label for="srv-is-public" style="cursor: pointer; color: #fff; font-size: 0.9em; text-transform: none; display: block; font-weight: 600;">Tampilkan di Daftar Public Server</label>
+                                <span style="font-size: 0.8em; color: var(--text-muted);">Jika dicentang, server Anda akan muncul di daftar Public Server yang dapat dilihat pengguna lain.</span>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                            <div>
+                                <label>vCPU</label>
+                                <input type="text" id="srv-vcpu" placeholder="3 vCPU">
+                            </div>
+                            <div>
+                                <label>RAM</label>
+                                <input type="text" id="srv-ram" placeholder="12 GB">
+                            </div>
+                            <div>
+                                <label>Disk</label>
+                                <input type="text" id="srv-disk" placeholder="60 GB SSD">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1; min-width: 200px;">Simpan & Daftarkan Server</button>
+                            <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeRegisterModal()">Batal</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -390,14 +418,16 @@
         </div>
 
         <!-- MODAL LOGIN -->
-        <div class="card hidden" id="login-card">
-            <h2>Autentikasi Pengguna</h2>
-            <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
-            <label>Email</label>
-            <input type="email" id="auth-email" placeholder="email@domain.com">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn btn-pink" style="flex: 1;" onclick="handleLogin()">Kirim Link Login</button>
-                <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
+        <div class="modal-overlay hidden" id="login-modal">
+            <div class="modal-card">
+                <h2>Autentikasi Pengguna</h2>
+                <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
+                <label>Email</label>
+                <input type="email" id="auth-email" placeholder="email@domain.com">
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-pink" style="flex: 1;" onclick="handleLogin()">Kirim Link Login</button>
+                    <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
+                </div>
             </div>
         </div>
     </div>
@@ -412,6 +442,7 @@
         let plainServerPassword = "";
         let isPasswordVisible = false;
         let cachedServerData = null;
+        let activeTab = 'public';
 
         async function init() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -435,30 +466,52 @@
 
         function updateAuthUI() {
             const authSection = document.getElementById('auth-section');
-            const myServersCard = document.getElementById('my-servers-card');
+            const tabBtnMy = document.getElementById('tab-btn-my');
 
             if (currentUser) {
                 authSection.innerHTML = `
                     <span style="font-size: 0.9em; margin-right: 12px; color: var(--text-muted);">${currentUser.email}</span>
                     <button class="btn btn-pink" style="padding: 8px 16px;" onclick="handleLogout()">Logout</button>
                 `;
-                myServersCard.classList.remove('hidden');
+                tabBtnMy.classList.remove('hidden');
             } else {
                 authSection.innerHTML = `<button class="btn" onclick="openLoginModal()">Login / Register</button>`;
-                myServersCard.classList.add('hidden');
+                tabBtnMy.classList.add('hidden');
+                if (activeTab === 'my') switchTab('public');
             }
             fetchServers();
         }
 
-        function openLoginModal() { document.getElementById('login-card').classList.remove('hidden'); }
-        function closeLoginModal() { document.getElementById('login-card').classList.add('hidden'); }
+        function switchTab(tabName) {
+            activeTab = tabName;
+            const btnPublic = document.getElementById('tab-btn-public');
+            const btnMy = document.getElementById('tab-btn-my');
+            const contentPublic = document.getElementById('tab-content-public');
+            const contentMy = document.getElementById('tab-content-my');
 
-        function toggleRegisterForm() {
-            const registerCard = document.getElementById('register-card');
-            registerCard.classList.toggle('hidden');
-            if(!registerCard.classList.contains('hidden')) {
-                window.scrollTo({ top: registerCard.offsetTop, behavior: 'smooth' });
+            if (tabName === 'public') {
+                btnPublic.classList.add('active');
+                btnMy.classList.remove('active');
+                contentPublic.classList.remove('hidden');
+                contentMy.classList.add('hidden');
+            } else {
+                btnMy.classList.add('active');
+                btnPublic.classList.remove('active');
+                contentMy.classList.remove('hidden');
+                contentPublic.classList.add('hidden');
             }
+        }
+
+        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+
+        function openRegisterModal() {
+            document.getElementById('register-modal').classList.remove('hidden');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('register-modal').classList.add('hidden');
+            resetForm();
         }
 
         async function handleLogin() {
@@ -485,7 +538,7 @@
                 return;
             }
 
-            // Render Server Saya (jika login)
+            // Render Server Saya
             if (currentUser && myListDiv) {
                 const myServers = data.filter(srv => srv.user_id === currentUser.id);
                 if (myServers.length === 0) {
@@ -495,7 +548,7 @@
                 }
             }
 
-            // Render Public Server (hanya yang is_public true / tidak di-set false)
+            // Render Public Server
             const publicServers = data.filter(srv => srv.is_public !== false);
             if (publicServers.length === 0) {
                 publicListDiv.innerHTML = `Belum ada public server yang tersedia.`;
@@ -704,8 +757,6 @@
             document.getElementById('form-title').innerText = "Daftarkan Server Baru";
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
             document.getElementById('delete-server-btn').classList.add('hidden');
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
-            document.getElementById('register-card').classList.add('hidden');
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -733,9 +784,7 @@
                         document.getElementById('form-title').innerText = "Edit Informasi Server";
                         document.getElementById('submit-btn').innerText = "Simpan Perubahan";
                         document.getElementById('delete-server-btn').classList.remove('hidden');
-                        document.getElementById('cancel-edit-btn').classList.remove('hidden');
-                        document.getElementById('register-card').classList.remove('hidden');
-                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
+                        openRegisterModal();
                     }
                 }, 1000);
             }
