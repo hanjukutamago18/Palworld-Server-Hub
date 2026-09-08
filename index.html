@@ -72,6 +72,7 @@
         .btn-pink { background: var(--accent-pink); color: #fff; }
         .btn-danger { background: #ff4747; color: #fff; }
         .btn-support { background: var(--accent-orange); color: #000; width: 100%; margin-top: 10px; display: block; }
+        .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
 
         input, textarea, select {
             width: 100%; padding: 10px; margin: 8px 0 16px 0;
@@ -88,7 +89,7 @@
         .hidden { display: none !important; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px 0; }
         .stat-box { background: #100c17; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; }
         .stat-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
         .stat-value { font-size: 1.1em; font-weight: bold; color: #fff; }
@@ -110,12 +111,22 @@
             </div>
 
             <div class="card">
-                <div class="section-title">Server Yang Tersedia</div>
+                <div class="flex-between" style="margin-bottom: 15px;">
+                    <div class="section-title" style="margin: 0;">Server Yang Tersedia</div>
+                    <div id="add-server-btn-container" class="hidden">
+                        <button class="btn btn-pink" onclick="toggleRegisterForm()">+ Tambah Server Baru</button>
+                    </div>
+                </div>
                 <div id="server-list" class="info-text">Memuat daftar server...</div>
             </div>
 
+            <!-- FORM TAMBAH / EDIT SERVER (TERSEMBUNYI SECARA DEFAULT) -->
             <div class="card hidden" id="register-card">
-                <div class="section-title" id="form-title">Daftarkan Server Baru</div>
+                <div class="flex-between" style="margin-bottom: 15px;">
+                    <div class="section-title" id="form-title" style="margin: 0;">Daftarkan Server Baru</div>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75em;" onclick="toggleRegisterForm()">✕ Tutup</button>
+                </div>
+
                 <form id="server-form" onsubmit="saveServer(event)">
                     <input type="hidden" id="edit-server-slug">
                     
@@ -167,7 +178,7 @@
                     <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
                         <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1;">Simpan & Daftarkan Server</button>
                         <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
-                        <button type="button" class="btn hidden" id="cancel-edit-btn" onclick="resetForm()" style="background:transparent; color:var(--text-muted);">Batal</button>
+                        <button type="button" class="btn btn-secondary hidden" id="cancel-edit-btn" onclick="resetForm()">Batal</button>
                     </div>
                 </form>
             </div>
@@ -186,14 +197,14 @@
                 </div>
             </div>
 
-            <!-- WIDGET STATISTIK LIVE BERSIH (REST API) -->
+            <!-- WIDGET STATISTIK LIVE -->
             <div class="card">
                 <div class="flex-between" style="margin-bottom: 10px;">
                     <div class="section-title" style="margin: 0;">Status & Statistik Live</div>
                     <button class="btn" style="padding: 4px 10px; font-size: 0.75em;" onclick="loadLiveStats()">🔄 Refresh</button>
                 </div>
                 
-                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-label">Players Online</div>
                         <div class="stat-value" id="stat-players">- / 32</div>
@@ -232,7 +243,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="/" class="btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">← Kembali ke Beranda</a>
+                    <a href="/" class="btn btn-secondary">← Kembali ke Beranda</a>
                 </div>
 
                 <div>
@@ -272,7 +283,7 @@
             <label>Email</label>
             <input type="email" id="auth-email" placeholder="email@domain.com">
             <button class="btn" onclick="handleLogin()">Kirim Link Login</button>
-            <button class="btn" style="background:transparent; color:var(--text-muted);" onclick="closeLoginModal()">Batal</button>
+            <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
         </div>
     </div>
 
@@ -308,22 +319,30 @@
 
         function updateAuthUI() {
             const authSection = document.getElementById('auth-section');
-            const registerCard = document.getElementById('register-card');
+            const addBtnContainer = document.getElementById('add-server-btn-container');
 
             if (currentUser) {
                 authSection.innerHTML = `
                     <span style="font-size: 0.9em; margin-right: 15px; color: var(--text-muted);">${currentUser.email}</span>
                     <button class="btn btn-pink" onclick="handleLogout()">Logout</button>
                 `;
-                registerCard.classList.remove('hidden');
+                addBtnContainer.classList.remove('hidden');
             } else {
                 authSection.innerHTML = `<button class="btn" onclick="openLoginModal()">Login / Register</button>`;
-                registerCard.classList.add('hidden');
+                addBtnContainer.classList.add('hidden');
             }
         }
 
         function openLoginModal() { document.getElementById('login-card').classList.remove('hidden'); }
         function closeLoginModal() { document.getElementById('login-card').classList.add('hidden'); }
+
+        function toggleRegisterForm() {
+            const registerCard = document.getElementById('register-card');
+            registerCard.classList.toggle('hidden');
+            if(!registerCard.classList.contains('hidden')) {
+                window.scrollTo({ top: registerCard.offsetTop, behavior: 'smooth' });
+            }
+        }
 
         async function handleLogin() {
             const email = document.getElementById('auth-email').value;
@@ -511,6 +530,7 @@
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
             document.getElementById('delete-server-btn').classList.add('hidden');
             document.getElementById('cancel-edit-btn').classList.add('hidden');
+            document.getElementById('register-card').classList.add('hidden');
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -538,7 +558,8 @@
                         document.getElementById('submit-btn').innerText = "Simpan Perubahan";
                         document.getElementById('delete-server-btn').classList.remove('hidden');
                         document.getElementById('cancel-edit-btn').classList.remove('hidden');
-                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
+                        document.getElementById('register-card').classList.remove('hidden');
+                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, height: 'smooth' });
                     }
                 }, 1000);
             }
