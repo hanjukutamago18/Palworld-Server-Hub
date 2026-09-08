@@ -564,28 +564,28 @@
                 return;
             }
 
-            // Render Server Saya
+            // Render Server Saya (menggunakan prefix 'my')
             if (currentUser && myListDiv) {
                 const myServers = data.filter(srv => srv.user_id === currentUser.id);
                 if (myServers.length === 0) {
                     myListDiv.innerHTML = `Anda belum mendaftarkan server. Klik tombol "+ Tambah Server Baru" di atas.`;
                 } else {
-                    myListDiv.innerHTML = myServers.map(srv => renderServerItem(srv, true)).join('');
-                    fetchServerStatuses(myServers);
+                    myListDiv.innerHTML = myServers.map(srv => renderServerItem(srv, true, 'my')).join('');
+                    fetchServerStatuses(myServers, 'my');
                 }
             }
 
-            // Render Public Server
+            // Render Public Server (menggunakan prefix 'pub')
             const publicServers = data.filter(srv => srv.is_public !== false);
             if (publicServers.length === 0) {
                 publicListDiv.innerHTML = `Belum ada public server yang tersedia.`;
             } else {
-                publicListDiv.innerHTML = publicServers.map(srv => renderServerItem(srv, false)).join('');
-                fetchServerStatuses(publicServers);
+                publicListDiv.innerHTML = publicServers.map(srv => renderServerItem(srv, false, 'pub')).join('');
+                fetchServerStatuses(publicServers, 'pub');
             }
         }
 
-        function renderServerItem(srv, isOwner) {
+        function renderServerItem(srv, isOwner, listType = 'pub') {
             const statusLabel = isOwner ? (srv.is_public === false 
                 ? '<span style="font-size: 0.7em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,159,67,0.3);">Private</span>' 
                 : '<span style="font-size: 0.7em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(163,255,71,0.3);">Public</span>') : '';
@@ -596,8 +596,8 @@
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <strong style="color: #fff; font-size: 1.05em;">${srv.name}</strong> 
                             ${statusLabel}
-                            <div class="status-badge checking" id="badge-${srv.slug}" style="padding: 2px 8px; font-size: 0.7em;">
-                                <div class="dot"></div><span id="badge-text-${srv.slug}">MEMERIKSA...</span>
+                            <div class="status-badge checking" id="badge-${listType}-${srv.slug}" style="padding: 2px 8px; font-size: 0.7em;">
+                                <div class="dot"></div><span id="badge-text-${listType}-${srv.slug}">MEMERIKSA...</span>
                             </div>
                         </div>
                         <div style="display: flex; gap: 6px; align-items: center;">
@@ -608,20 +608,20 @@
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.78em; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
                         <span style="font-family: monospace;">📍 ${srv.ip}</span>
                         <div style="display: flex; gap: 12px;">
-                            <span>👥 Pemain: <strong id="players-${srv.slug}" style="color: #fff;">- / 32</strong></span>
-                            <span>⚙️ Versi: <strong id="version-${srv.slug}" style="color: #fff;">-</strong></span>
+                            <span>👥 Pemain: <strong id="players-${listType}-${srv.slug}" style="color: #fff;">- / 32</strong></span>
+                            <span>⚙️ Versi: <strong id="version-${listType}-${srv.slug}" style="color: #fff;">-</strong></span>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        async function fetchServerStatuses(servers) {
+        async function fetchServerStatuses(servers, listType = 'pub') {
             servers.forEach(async (srv) => {
-                const badge = document.getElementById(`badge-${srv.slug}`);
-                const badgeText = document.getElementById(`badge-text-${srv.slug}`);
-                const playersElem = document.getElementById(`players-${srv.slug}`);
-                const versionElem = document.getElementById(`version-${srv.slug}`);
+                const badge = document.getElementById(`badge-${listType}-${srv.slug}`);
+                const badgeText = document.getElementById(`badge-text-${listType}-${srv.slug}`);
+                const playersElem = document.getElementById(`players-${listType}-${srv.slug}`);
+                const versionElem = document.getElementById(`version-${listType}-${srv.slug}`);
 
                 if (!badge) return;
 
