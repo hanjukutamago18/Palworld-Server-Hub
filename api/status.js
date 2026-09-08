@@ -1,27 +1,47 @@
 export default async function handler(req, res) {
-    // Data ini diambil dari log console Pterodactyl kamu
-    const palworldIp = '15.235.180.31';
-    const apiPort = '28045';
-    const adminPassword = 'adminnyasibuk123';
-    
-    // Palworld API membutuhkan otentikasi admin
-    const authHeader = 'Basic ' + Buffer.from('admin:' + adminPassword).toString('base64');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-    try {
-        const response = await fetch(`http://${palworldIp}:${apiPort}/v1/api/info`, {
-            headers: {
-                'Authorization': authHeader,
-                'Accept': 'application/json'
-            }
-        });
+  const { ip, api_port, password } = req.query;
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
+  if (!ip || !api_port || !password) {
+    return res.status(400).json({ error: 'Parameter ip, api_port, dan password diperlukan' });
+  }
 
-        const data = await response.json();
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Gagal terhubung ke Palworld' });
-    }
+  const cleanIP = ip.split(':')[0];
+  const apiBaseUrl = `http://${cleanIP}:${api_port}`;
+  const authHeader = 'Basic ' + Buffer.from(`admin:${password}`).toString('base64');
+
+  try {
+    const [infoRes, playersRes] = await Promise.all([
+      fetch(`${apiBaseUrl}/v1/api/info`, {
+        headers: { 
+          'Authorization': authHeader,
+          'Accept': 'application/json'
+        },
+        signal: AbortSignal.timeout(4000)
+      }),
+      fetch(`${apiBaseUrl}/v1/api/players`, {
+        headers: { 
+          'Authorization': authHeader,
+          'Accept': 'application/json'
+        },
+        signal: AbortSignal.timeout(4000)
+      })
+    ]);
+
+    let infoData = null;
+    let playersData = null;
+
+    if (infoRes.ok) infoData = await infoRes.json();
+    if (playersRes.ok) playersData = await playersRes.json();
+
+    return res.status(200).json({
+      online: true,
+      info: infoData,
+      players: playersData
+    });
+  } catch (err) {
+    return res.status(200).json({ online: false, error: err.message });
+  }
 }
