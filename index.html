@@ -14,6 +14,7 @@
             --text-muted: #8b839c;
             --accent-green: #a3ff47;
             --accent-pink: #ff2a7a;
+            --accent-orange: #ff9f43;
         }
 
         body {
@@ -62,11 +63,12 @@
         .copy-btn, .btn {
             background: var(--accent-green); color: #000; border: none;
             padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;
-            font-size: 0.85em; text-decoration: none; transition: 0.2s; display: inline-block;
+            font-size: 0.85em; text-decoration: none; transition: 0.2s; display: inline-block; text-align: center;
         }
         .copy-btn:hover, .btn:hover { opacity: 0.85; }
         .btn-pink { background: var(--accent-pink); color: #fff; }
         .btn-danger { background: #ff4747; color: #fff; }
+        .btn-support { background: var(--accent-orange); color: #000; width: 100%; margin-top: 10px; display: block; }
 
         input, textarea, select {
             width: 100%; padding: 10px; margin: 8px 0 16px 0;
@@ -107,7 +109,7 @@
             <div class="card hidden" id="register-card">
                 <div class="section-title" id="form-title">Daftarkan Server Baru</div>
                 <form id="server-form" onsubmit="saveServer(event)">
-                    <input type="hidden" id="edit-server-id">
+                    <input type="hidden" id="edit-server-slug">
                     
                     <label>Nama Server</label>
                     <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
@@ -124,10 +126,16 @@
                         <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
                     </select>
 
+                    <label>Password Server Game (Opsional - Kosongkan jika tanpa password)</label>
+                    <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
+
+                    <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
+                    <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
+
                     <label>Port REST API</label>
                     <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
 
-                    <label>Password Admin</label>
+                    <label>Password Admin (RCON/API)</label>
                     <input type="password" id="srv-pass" placeholder="Password admin server" required>
 
                     <label>Slug URL Unik (untuk URL publik)</label>
@@ -201,14 +209,30 @@
                 </div>
 
                 <div>
+                    <!-- KONEKSI & PASSWORD -->
                     <div class="card">
                         <div class="section-title">Koneksi Server</div>
-                        <div class="info-text" style="margin-bottom: 10px;">Salin IP di bawah ini untuk bergabung ke dalam game:</div>
+                        <div class="info-text" style="margin-bottom: 10px;">Salin IP di bawah ini untuk bergabung:</div>
                         
                         <div class="ip-box">
                             <span id="det-ip">-</span>
                             <button class="copy-btn" onclick="copyIP()">SALIN</button>
                         </div>
+
+                        <div id="password-container" class="hidden" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                            <p style="margin:0 0 8px 0; font-size:0.8em; color:var(--text-muted);">PASSWORD SERVER</p>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="password" id="det-server-pass" value="" readonly style="margin:0; background:#100c17; font-family:monospace; color:#fff;">
+                                <button class="copy-btn" id="reveal-pass-btn" onclick="togglePassword()" style="white-space:nowrap;">LIHAT</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TOMBOL DONASI / SUPPORT -->
+                    <div class="card hidden" id="support-card" style="text-align: center;">
+                        <div class="section-title" style="text-align: left;">Dukung Server</div>
+                        <p class="info-text" style="font-size: 0.85em; margin-bottom: 12px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa bulanan.</p>
+                        <a href="#" id="det-support-link" target="_blank" class="btn btn-support">☕ Support / Donasi Server</a>
                     </div>
                 </div>
             </div>
@@ -232,7 +256,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUser = null;
         let activeServerIP = "";
-        let currentServerData = null;
+        let plainServerPassword = "";
 
         async function init() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -317,7 +341,6 @@
                 return;
             }
 
-            currentServerData = data;
             document.getElementById('det-name').innerText = data.name;
             document.getElementById('det-desc').innerText = data.description || "Tidak ada deskripsi.";
             document.getElementById('det-join').innerText = data.join_method || "Community Server";
@@ -327,6 +350,23 @@
             document.getElementById('det-vcpu').innerText = data.vcpu || "-";
             document.getElementById('det-ram').innerText = data.ram || "-";
             document.getElementById('det-disk').innerText = data.disk || "-";
+
+            // Tangani Password Server (Jika ada isinya)
+            if (data.server_password && data.server_password.trim() !== "") {
+                plainServerPassword = data.server_password;
+                document.getElementById('password-container').classList.remove('hidden');
+                document.getElementById('det-server-pass').value = "••••••••";
+            } else {
+                document.getElementById('password-container').classList.add('hidden');
+            }
+
+            // Tangani Tombol Support / Donasi
+            if (data.support_link && data.support_link.trim() !== "") {
+                document.getElementById('det-support-link').href = data.support_link;
+                document.getElementById('support-card').classList.remove('hidden');
+            } else {
+                document.getElementById('support-card').classList.add('hidden');
+            }
 
             const badge = document.getElementById('det-status-badge');
             badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
@@ -346,15 +386,31 @@
             }
         }
 
+        function togglePassword() {
+            const passInput = document.getElementById('det-server-pass');
+            const btn = document.getElementById('reveal-pass-btn');
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                passInput.value = plainServerPassword;
+                btn.innerText = "SEMBUNYIKAN";
+            } else {
+                passInput.type = "password";
+                passInput.value = "••••••••";
+                btn.innerText = "LIHAT";
+            }
+        }
+
         async function saveServer(e) {
             e.preventDefault();
             if (!currentUser) return alert('Silakan login terlebih dahulu!');
 
-            const serverId = document.getElementById('edit-server-id').value;
+            const editSlug = document.getElementById('edit-server-slug').value;
             const name = document.getElementById('srv-name').value;
             const description = document.getElementById('srv-desc').value;
             const ip = document.getElementById('srv-ip').value;
             const join_method = document.getElementById('srv-join').value;
+            const server_password = document.getElementById('srv-server-pass').value;
+            const support_link = document.getElementById('srv-support').value;
             const api_port = document.getElementById('srv-api').value;
             const admin_password = document.getElementById('srv-pass').value;
             const slug = document.getElementById('srv-slug').value;
@@ -362,22 +418,16 @@
             const ram = document.getElementById('srv-ram').value;
             const disk = document.getElementById('srv-disk').value;
 
-            // Karena kita menggunakan slug sebagai acuan unik, kita cek apakah ini mode edit atau insert baru
-            const urlParams = new URLSearchParams(window.location.search);
-            const editSlug = urlParams.get('edit');
-
             if (editSlug) {
-                // Update berdasarkan slug lama
                 const { error } = await supabaseClient.from('servers').update({
-                    name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk
+                    name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk
                 }).eq('slug', editSlug);
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
-                // Insert server baru
                 const { error } = await supabaseClient.from('servers').insert([
-                    { name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
+                    { name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
                 if (error) alert('Gagal: ' + error.message);
@@ -386,12 +436,11 @@
         }
 
         async function deleteServer() {
-            const slug = document.getElementById('srv-slug').value;
-            if (!slug) return alert('Slug server tidak ditemukan!');
+            const editSlug = document.getElementById('edit-server-slug').value;
+            if (!editSlug) return alert('Slug server tidak ditemukan!');
 
             if (confirm("Apakah kamu yakin ingin menghapus server ini secara permanen?")) {
-                const { error } = await supabaseClient.from('servers').delete().eq('slug', slug);
-                
+                const { error } = await supabaseClient.from('servers').delete().eq('slug', editSlug);
                 if (error) {
                     alert('Gagal menghapus server: ' + error.message);
                 } else {
@@ -403,7 +452,7 @@
 
         function resetForm() {
             document.getElementById('server-form').reset();
-            document.getElementById('edit-server-id').value = "";
+            document.getElementById('edit-server-slug').value = "";
             document.getElementById('form-title').innerText = "Daftarkan Server Baru";
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
             document.getElementById('delete-server-btn').classList.add('hidden');
@@ -417,11 +466,13 @@
                 setTimeout(async () => {
                     const { data } = await supabaseClient.from('servers').select('*').eq('slug', editSlug).single();
                     if (data) {
-                        document.getElementById('edit-server-id').value = data.id;
+                        document.getElementById('edit-server-slug').value = data.slug;
                         document.getElementById('srv-name').value = data.name || '';
                         document.getElementById('srv-desc').value = data.description || '';
                         document.getElementById('srv-ip').value = data.ip || '';
                         document.getElementById('srv-join').value = data.join_method || 'Community Server';
+                        document.getElementById('srv-server-pass').value = data.server_password || '';
+                        document.getElementById('srv-support').value = data.support_link || '';
                         document.getElementById('srv-api').value = data.api_port || '';
                         document.getElementById('srv-pass').value = data.admin_password || '';
                         document.getElementById('srv-slug').value = data.slug || '';
