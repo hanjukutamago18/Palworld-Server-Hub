@@ -12,24 +12,21 @@ export default async function handler(req, res) {
   const apiBaseUrl = `http://${cleanIP}:${api_port}`;
   const authHeader = 'Basic ' + Buffer.from(`admin:${password}`).toString('base64');
 
+  const startTime = Date.now();
+
   try {
     const [infoRes, playersRes] = await Promise.all([
       fetch(`${apiBaseUrl}/v1/api/info`, {
-        headers: { 
-          'Authorization': authHeader,
-          'Accept': 'application/json'
-        },
+        headers: { 'Authorization': authHeader, 'Accept': 'application/json' },
         signal: AbortSignal.timeout(4000)
       }),
       fetch(`${apiBaseUrl}/v1/api/players`, {
-        headers: { 
-          'Authorization': authHeader,
-          'Accept': 'application/json'
-        },
+        headers: { 'Authorization': authHeader, 'Accept': 'application/json' },
         signal: AbortSignal.timeout(4000)
       })
     ]);
 
+    const latency = Date.now() - startTime;
     let infoData = null;
     let playersData = null;
 
@@ -38,6 +35,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       online: true,
+      latency: latency,
       info: infoData,
       players: playersData
     });
