@@ -1089,7 +1089,7 @@
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
-                const { error } = await supabaseClient.from('servers'].insert([
+                const { error } = await supabaseClient.from('servers').insert([
                     { name, description, ip, categories: categoriesStr, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
