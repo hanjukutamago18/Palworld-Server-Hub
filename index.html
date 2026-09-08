@@ -362,6 +362,11 @@
         .input-with-unit input:focus {
             box-shadow: none;
         }
+        .input-with-unit input:disabled {
+            background: #100c17;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
         .input-with-unit .unit {
             padding: 0 14px;
             color: var(--text-muted);
@@ -668,10 +673,10 @@
                         </div>
                     </div>
 
+                    <!-- Input Hardware Specs dengan Fitur Checklist "Unlimited" di Disk -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                         <div>
                             <label>vCPU</label>
-                            <!-- Script oninput mencegah pengetikan karakter selain angka -->
                             <div class="input-with-unit">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="srv-vcpu" placeholder="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                 <span class="unit">vCPU</span>
@@ -686,10 +691,13 @@
                         </div>
                         <div>
                             <label>Disk</label>
-                            <div class="input-with-unit">
+                            <div class="input-with-unit" style="margin-bottom: 6px;">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="srv-disk" placeholder="60" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                                <span class="unit">GB</span>
+                                <span class="unit" id="disk-unit">GB</span>
                             </div>
+                            <label class="checkbox-label" style="font-size: 0.8em; color: var(--text-muted); margin-bottom: 16px;">
+                                <input type="checkbox" id="disk-unlimited" onchange="toggleDiskInput()"> Unlimited
+                            </label>
                         </div>
                     </div>
 
@@ -728,6 +736,24 @@
                 randomizer.checked = false;
             } else if (type === 'other' && (pvp.checked || hardcore.checked || randomizer.checked)) {
                 pve.checked = false;
+            }
+        }
+
+        // Fungsi agar input disk disable saat dicentang 'Unlimited'
+        function toggleDiskInput() {
+            const diskInput = document.getElementById('srv-disk');
+            const unitLabel = document.getElementById('disk-unit');
+            const isUnlimited = document.getElementById('disk-unlimited').checked;
+            
+            if (isUnlimited) {
+                diskInput.value = '';
+                diskInput.disabled = true;
+                diskInput.placeholder = 'Unlimited';
+                unitLabel.style.display = 'none'; // Sembunyikan label "GB"
+            } else {
+                diskInput.disabled = false;
+                diskInput.placeholder = '60';
+                unitLabel.style.display = 'flex'; // Munculkan label "GB"
             }
         }
 
@@ -830,14 +856,12 @@
             document.getElementById('srv-desc').value = data.description || '';
             document.getElementById('srv-ip').value = data.ip || '';
             
-            // Set Categories Checkboxes
             const cats = (data.categories || '').split(',').map(c => c.trim());
             document.getElementById('cat-pve').checked = cats.includes('PVE');
             document.getElementById('cat-pvp').checked = cats.includes('PVP');
             document.getElementById('cat-hardcore').checked = cats.includes('Hardcore');
             document.getElementById('cat-randomizer').checked = cats.includes('Randomizer');
 
-            // Set Join Method Checkboxes
             const joins = (data.join_method || '').split(',').map(j => j.trim());
             document.getElementById('join-community').checked = joins.some(j => j.toLowerCase().includes('community'));
             document.getElementById('join-ip').checked = joins.some(j => j.toLowerCase().includes('ip') || j.toLowerCase().includes('direct'));
@@ -850,10 +874,23 @@
             document.getElementById('srv-slug').value = data.slug || '';
             document.getElementById('srv-is-public').checked = data.is_public !== false;
             
-            // Memfilter huruf dari data lama database agar rapi saat diedit (Hanya tampil angka)
             document.getElementById('srv-vcpu').value = data.vcpu ? data.vcpu.replace(/[^0-9.]/g, '') : '';
             document.getElementById('srv-ram').value = data.ram ? data.ram.replace(/[^0-9.]/g, '') : '';
-            document.getElementById('srv-disk').value = data.disk ? data.disk.replace(/[^0-9.]/g, '') : '';
+            
+            // Logika auto-checklist Unlimited jika data lama bernilai "Unlimited"
+            if (data.disk && data.disk.toLowerCase() === 'unlimited') {
+                document.getElementById('disk-unlimited').checked = true;
+                document.getElementById('srv-disk').value = '';
+                document.getElementById('srv-disk').disabled = true;
+                document.getElementById('srv-disk').placeholder = 'Unlimited';
+                document.getElementById('disk-unit').style.display = 'none';
+            } else {
+                document.getElementById('disk-unlimited').checked = false;
+                document.getElementById('srv-disk').disabled = false;
+                document.getElementById('srv-disk').placeholder = '60';
+                document.getElementById('disk-unit').style.display = 'flex';
+                document.getElementById('srv-disk').value = data.disk ? data.disk.replace(/[^0-9.]/g, '') : '';
+            }
 
             document.getElementById('form-title').innerText = "Edit Informasi Server";
             document.getElementById('submit-btn').innerText = "Simpan Perubahan";
@@ -1166,14 +1203,15 @@
             const slug = document.getElementById('srv-slug').value;
             const is_public = document.getElementById('srv-is-public').checked;
             
-            // Menggabungkan Inputan Angka dengan Labelnya Saat Disimpan ke Database
+            // Logic Simpan Checkbox "Unlimited" vs Angka
             const vcpuRaw = document.getElementById('srv-vcpu').value;
             const ramRaw = document.getElementById('srv-ram').value;
             const diskRaw = document.getElementById('srv-disk').value;
+            const isDiskUnlimited = document.getElementById('disk-unlimited').checked;
 
             const vcpu = vcpuRaw ? vcpuRaw + ' vCPU' : '';
             const ram = ramRaw ? ramRaw + ' GB' : '';
-            const disk = diskRaw ? diskRaw + ' GB' : '';
+            const disk = isDiskUnlimited ? 'Unlimited' : (diskRaw ? diskRaw + ' GB' : '');
 
             if (serverId) {
                 const { error } = await supabaseClient.from('servers').update({
@@ -1213,6 +1251,13 @@
             document.getElementById('srv-is-public').checked = true;
             document.getElementById('join-community').checked = true;
             document.getElementById('join-ip').checked = false;
+            
+            // Reset state disk unlimited 
+            document.getElementById('disk-unlimited').checked = false;
+            document.getElementById('srv-disk').disabled = false;
+            document.getElementById('srv-disk').placeholder = '60';
+            document.getElementById('disk-unit').style.display = 'flex';
+
             document.getElementById('form-title').innerText = "Daftarkan Server Baru";
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
             document.getElementById('delete-server-btn').classList.add('hidden');
