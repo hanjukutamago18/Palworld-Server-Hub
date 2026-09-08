@@ -2,7 +2,7 @@ export default async function handler(req, res) {
     // Data ini diambil dari log console Pterodactyl kamu
     const palworldIp = '15.235.180.31';
     const apiPort = '28045';
-    const adminPassword = 'ajinomoto';
+    const adminPassword = 'adminnyasibuk123';
     
     // Palworld API membutuhkan otentikasi admin
     const authHeader = 'Basic ' + Buffer.from('admin:' + adminPassword).toString('base64');
