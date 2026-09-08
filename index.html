@@ -171,18 +171,18 @@
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Daftar Pemain Online (Compact & Vertically Stacked List) */
-        .players-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        /* Styling Daftar Pemain Online (Sangat Compact & Rapat ke Judul) */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
             margin-top: 6px;
         }
         .player-box {
             background-color: #100c17;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 14px;
+            border-radius: 10px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -191,8 +191,8 @@
         .player-box:hover {
             border-color: var(--accent-green);
             background-color: #161622;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 10px rgba(163, 255, 71, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(163, 255, 71, 0.1);
         }
 
         .modal-overlay {
@@ -348,10 +348,10 @@
                 </div>
             </div>
 
-            <!-- DAFTAR PEMAIN ONLINE (Compact Stack ke Bawah) -->
+            <!-- DAFTAR PEMAIN ONLINE (Padding Card & Jarak Diperkecil Maksimal) -->
             <div class="card" style="padding: 16px 20px;">
-                <div class="section-title" style="margin-bottom: 2px;">Daftar Pemain Online</div>
-                <div id="players-list-content" class="info-text" style="margin-top: 4px;">Memuat daftar pemain...</div>
+                <div class="section-title" style="margin-bottom: 0;">Daftar Pemain Online</div>
+                <div id="players-list-content" style="margin-top: 4px;">Memuat daftar pemain...</div>
             </div>
 
             <div class="grid-layout">
@@ -833,9 +833,8 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
-                        // Menggunakan stack vertikal ke bawah yang compact dan fleksibel
                         playersListContainer.innerHTML = `
-                            <div class="players-stack">
+                            <div class="players-grid">
                                 ${players.map(p => {
                                     const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
                                     const maskedUid = rawUid ? rawUid.substring(0, 16) + (rawUid.length > 16 ? '...' : '') : '-';
@@ -850,7 +849,7 @@
                             </div>
                         `;
                     } else {
-                        playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Belum ada pemain yang online saat ini.</div>`;
+                        playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-top: 4px;">Belum ada pemain yang online saat ini.</div>`;
                     }
                 } else {
                     throw new Error("Server offline");
@@ -860,7 +859,7 @@
                 badge.innerHTML = `<div class="dot"></div><span>OFFLINE</span>`;
                 document.getElementById('stat-version').innerText = "Offline";
                 document.getElementById('stat-players').innerText = "0 / 32";
-                playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Server sedang offline atau gagal terhubung ke REST API.</div>`;
+                playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-top: 4px;">Server sedang offline atau gagal terhubung ke REST API.</div>`;
             }
         }
 
@@ -913,7 +912,7 @@
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
-                const { error } = await supabaseClient.from('servers').insert([
+                const { error } = await supabaseClient.from('servers'].insert([
                     { name, description, ip, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
