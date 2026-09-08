@@ -15,6 +15,7 @@
             --accent-green: #a3ff47;
             --accent-pink: #ff2a7a;
             --accent-orange: #ff9f43;
+            --accent-discord: #5865F2;
         }
 
         body {
@@ -106,7 +107,7 @@
         .status-badge.checking { background-color: rgba(255, 159, 67, 0.1); color: var(--accent-orange); border-color: rgba(255, 159, 67, 0.3); }
         .status-badge .dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 5px var(--accent-green); }
         .status-badge.offline .dot { background-color: #ff4747; box-shadow: 0 0 5px #ff4747; }
-        .status-badge.checking .dot { background-color: var(--accent-orange); box-shadow: 0 0 5px var(--accent-orange); }
+        .status-badge.checking .dot { background-color: var(--accent-orange); box-shadow: 0 0 5px #ff4747; }
 
         .grid-layout { display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 20px; }
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
@@ -206,6 +207,14 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-decoration: none; transition: 0.2s;
         }
         .btn-support:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        .btn-discord {
+            background: var(--accent-discord); color: #fff; padding: 10px 22px;
+            font-size: 0.9em; font-weight: 600; border-radius: 8px; display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-decoration: none; transition: 0.2s;
+        }
+        .btn-discord:hover { opacity: 0.85; transform: translateY(-1px); }
 
         .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
 
@@ -309,6 +318,9 @@
 
                         <label>Password Server Game (Opsional)</label>
                         <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
+
+                        <label>Link Komunitas / Discord (Opsional)</label>
+                        <input type="url" id="srv-discord" placeholder="https://discord.gg/kodeinvitasi">
 
                         <label>Link Support / Donasi (Saweria, Trakteer, dll - Opsional)</label>
                         <input type="url" id="srv-support" placeholder="https://trakteer.id/namaakun">
@@ -456,11 +468,18 @@
                         </div>
                     </div>
 
+                    <!-- TOMBOL KOMUNITAS / DISCORD -->
+                    <div class="card hidden" id="discord-card" style="text-align: center;">
+                        <div class="section-title" style="text-align: left; margin-bottom: 12px;">Komunitas Server</div>
+                        <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bergabunglah dengan server Discord komunitas untuk bermain bersama.</p>
+                        <a href="#" id="det-discord-link" target="_blank" class="btn-discord" style="width: 100%; box-sizing: border-box;">💬 Gabung Discord Komunitas</a>
+                    </div>
+
                     <!-- TOMBOL DONASI / SUPPORT -->
                     <div class="card hidden" id="support-card" style="text-align: center;">
                         <div class="section-title" style="text-align: left; margin-bottom: 12px;">Dukung Server</div>
                         <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa.</p>
-                        <a href="#" id="det-support-link" target="_blank" class="btn-support">☕ Support / Donasi Server</a>
+                        <a href="#" id="det-support-link" target="_blank" class="btn-support" style="width: 100%; box-sizing: border-box;">☕ Support / Donasi Server</a>
                     </div>
                 </div>
             </div>
@@ -722,6 +741,14 @@
                 passBtnGroup.classList.add('hidden');
             }
 
+            // Menampilkan atau menyembunyikan tombol Discord Komunitas
+            if (data.discord_link && data.discord_link.trim() !== "") {
+                document.getElementById('det-discord-link').href = data.discord_link;
+                document.getElementById('discord-card').classList.remove('hidden');
+            } else {
+                document.getElementById('discord-card').classList.add('hidden');
+            }
+
             if (data.support_link && data.support_link.trim() !== "") {
                 document.getElementById('det-support-link').href = data.support_link;
                 document.getElementById('support-card').classList.remove('hidden');
@@ -769,14 +796,12 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
-                        // Membuat grid box compact dengan menampilkan setengah UID demi keamanan player
+                        // Menampilkan tepat 5 digit awal UID agar aman namun tetap teridentifikasi jelas
                         playersListContainer.innerHTML = `
                             <div class="players-grid">
                                 ${players.map(p => {
                                     const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
-                                    // Menampilkan setengah bagian awal dari UID agar aman dan tetap dapat diidentifikasi
-                                    const halfLength = Math.max(4, Math.floor(rawUid.length / 2));
-                                    const maskedUid = rawUid ? rawUid.substring(0, halfLength) + '...' : '-';
+                                    const maskedUid = rawUid ? rawUid.substring(0, 5) + '...' : '-';
                                     
                                     return `
                                         <div class="player-box">
@@ -833,6 +858,7 @@
             const ip = document.getElementById('srv-ip').value;
             const join_method = document.getElementById('srv-join').value;
             const server_password = document.getElementById('srv-server-pass').value;
+            const discord_link = document.getElementById('srv-discord').value;
             const support_link = document.getElementById('srv-support').value;
             const api_port = document.getElementById('srv-api').value;
             const admin_password = document.getElementById('srv-pass').value;
@@ -844,14 +870,14 @@
 
             if (serverId) {
                 const { error } = await supabaseClient.from('servers').update({
-                    name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk
+                    name, description, ip, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk
                 }).eq('slug', serverId);
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
                 const { error } = await supabaseClient.from('servers').insert([
-                    { name, description, ip, join_method, server_password, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
+                    { name, description, ip, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
                 if (error) alert('Gagal: ' + error.message);
@@ -896,6 +922,7 @@
                         document.getElementById('srv-ip').value = data.ip || '';
                         document.getElementById('srv-join').value = data.join_method || 'Community Server';
                         document.getElementById('srv-server-pass').value = data.server_password || '';
+                        document.getElementById('srv-discord').value = data.discord_link || '';
                         document.getElementById('srv-support').value = data.support_link || '';
                         document.getElementById('srv-api').value = data.api_port || '';
                         document.getElementById('srv-pass').value = data.admin_password || '';
