@@ -444,9 +444,10 @@
                     badge.className = "status-badge";
                     badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
 
+                    // Menangkap berbagai kemungkinan nama properti dari API Palworld
                     document.getElementById('stat-version').innerText = json.info.version || "-";
-                    document.getElementById('stat-days').innerText = json.info.days ?? "-";
-                    document.getElementById('stat-guid').innerText = json.info.world_guid || "-";
+                    document.getElementById('stat-days').innerText = json.info.days ?? json.info.game_days ?? json.info.day ?? "0";
+                    document.getElementById('stat-guid').innerText = json.info.world_guid ?? json.info.worldGuid ?? json.info.guid ?? "Tidak tersedia dari API";
 
                     const playerCount = json.players && json.players.players ? json.players.players.length : 0;
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
