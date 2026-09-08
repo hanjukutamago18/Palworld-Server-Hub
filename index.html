@@ -159,7 +159,12 @@
         }
         .btn-tab:hover:not(.active) { border-color: var(--accent-pink); color: #fff; }
 
-        /* List Server (Clickable Card) */
+        /* Auth Modal Tabs (Login / Register) */
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .auth-tab-btn { background: none; border: none; color: var(--text-muted); font-weight: bold; font-size: 1em; cursor: pointer; padding: 6px 12px; border-radius: 6px; }
+        .auth-tab-btn.active { background: var(--accent-pink); color: #fff; }
+
+        /* List Server */
         .server-item {
             background-color: #100c17; border: 1px solid var(--border-color);
             border-radius: 10px; padding: 10px 16px; margin-bottom: 6px;
@@ -254,7 +259,7 @@
         }
         .modal-card {
             background-color: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 28px; width: 100%; max-width: 650px;
+            border-radius: 14px; padding: 28px; width: 100%; max-width: 500px;
             max-height: 90vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
 
@@ -321,7 +326,7 @@
                         <h1>Public Palworld Server</h1>
                     </div>
                     <div id="auth-section">
-                        <button class="btn" onclick="openLoginModal()">Login / Register</button>
+                        <button class="btn" onclick="openAuthModal()">Login / Register</button>
                     </div>
                 </div>
 
@@ -499,6 +504,70 @@
             </div>
         </footer>
 
+        <!-- MODAL AUTH (LOGIN & REGISTER) -->
+        <div class="modal-overlay hidden" id="auth-modal">
+            <div class="modal-card">
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Masuk (Login)</button>
+                    <button class="auth-tab-btn" id="tab-register" onclick="switchAuthTab('register')">Daftar (Register)</button>
+                </div>
+
+                <!-- FORM LOGIN (Hanya Username & Password) -->
+                <div id="form-login-container">
+                    <div class="section-title" style="margin-bottom: 12px;">Masuk dengan Username</div>
+                    <form onsubmit="handleLogin(event)">
+                        <label>Username</label>
+                        <input type="text" id="login-username" placeholder="Masukkan username" required>
+
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="Masukkan password" required>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-pink" style="flex: 1;">Masuk</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeAuthModal()">Batal</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- FORM REGISTER (Email, Username, & Password dengan Verifikasi) -->
+                <div id="form-register-container" class="hidden">
+                    <div class="section-title" style="margin-bottom: 12px;">Buat Akun Baru</div>
+                    <form onsubmit="handleRegister(event)">
+                        <label>Email (Untuk Verifikasi)</label>
+                        <input type="email" id="reg-email" placeholder="email@domain.com" required>
+
+                        <label>Username</label>
+                        <input type="text" id="reg-username" placeholder="Pilih username unik" required>
+
+                        <label>Password</label>
+                        <input type="password" id="reg-password" placeholder="Buat password minimal 6 karakter" required>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-pink" style="flex: 1;">Daftar & Kirim Verifikasi</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeAuthModal()">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL PENGATURAN AKUN / GANTI PASSWORD -->
+        <div class="modal-overlay hidden" id="settings-modal">
+            <div class="modal-card">
+                <div class="section-title" style="margin-bottom: 12px;">Pengaturan Akun</div>
+                <p class="info-text" style="font-size: 0.9em; margin-bottom: 15px;">Ubah password akun Anda di bawah ini:</p>
+                <form onsubmit="handleChangePassword(event)">
+                    <label>Password Baru</label>
+                    <input type="password" id="new-password" placeholder="Masukkan password baru" required>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-pink" style="flex: 1;">Simpan Password Baru</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- MODAL POP-UP: TAMBAH / EDIT SERVER -->
         <div class="modal-overlay hidden" id="register-modal">
             <div class="modal-card">
@@ -565,20 +634,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- MODAL LOGIN -->
-        <div class="modal-overlay hidden" id="login-modal">
-            <div class="modal-card">
-                <h2>Autentikasi Pengguna</h2>
-                <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
-                <label>Email</label>
-                <input type="email" id="auth-email" placeholder="email@domain.com">
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="btn btn-pink" style="flex: 1;" onclick="handleLogin()">Kirim Link Login</button>
-                    <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -640,18 +695,132 @@
 
             if (currentUser) {
                 authSection.innerHTML = `
-                    <span style="font-size: 0.9em; margin-right: 12px; color: var(--text-muted);">${currentUser.email}</span>
-                    <button class="btn btn-pink" style="padding: 8px 16px;" onclick="handleLogout()">Logout</button>
+                    <span style="font-size: 0.9em; margin-right: 10px; color: var(--text-muted);">${currentUser.email}</span>
+                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8em; margin-right: 6px;" onclick="openSettingsModal()">⚙️ Pengaturan</button>
+                    <button class="btn btn-pink" style="padding: 6px 12px; font-size: 0.8em;" onclick="handleLogout()">Logout</button>
                 `;
                 tabBtnMy.classList.remove('hidden');
             } else {
-                authSection.innerHTML = `<button class="btn" onclick="openLoginModal()">Login / Register</button>`;
+                authSection.innerHTML = `<button class="btn" onclick="openAuthModal()">Login / Register</button>`;
                 tabBtnMy.classList.add('hidden');
                 if (activeTab === 'my') switchTab('public');
             }
             if (!document.getElementById('view-home').classList.contains('hidden')) {
                 fetchServers();
             }
+        }
+
+        function switchAuthTab(tab) {
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const formLogin = document.getElementById('form-login-container');
+            const formRegister = document.getElementById('form-register-container');
+
+            if (tab === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                formRegister.classList.remove('hidden');
+                formLogin.classList.add('hidden');
+            }
+        }
+
+        function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('reg-email').value;
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+
+            // 1. Register dengan Supabase Auth
+            const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: { data: { username } }
+            });
+
+            if (error) {
+                alert('Gagal registrasi: ' + error.message);
+                return;
+            }
+
+            // 2. Simpan mapping username -> email ke tabel profiles
+            if (data.user) {
+                const { error: profileError } = await supabaseClient.from('profiles').insert([
+                    { id: data.user.id, username: username, email: email }
+                ]);
+
+                if (profileError) {
+                    console.error("Gagal simpan profil:", profileError.message);
+                }
+            }
+
+            alert('Registrasi berhasil! Silakan cek email Anda untuk melakukan verifikasi akun sebelum login.');
+            closeAuthModal();
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // 1. Cari email berdasarkan username di tabel profiles
+            const { data: profileData, error: profileError } = await supabaseClient
+                .from('profiles')
+                .select('email')
+                .eq('username', username)
+                .single();
+
+            if (profileError || !profileData) {
+                alert('Username tidak ditemukan!');
+                return;
+            }
+
+            // 2. Login menggunakan email yang ditemukan dan password
+            const { error: loginError } = await supabaseClient.auth.signInWithPassword({
+                email: profileData.email,
+                password: password
+            });
+
+            if (loginError) {
+                alert('Gagal login: ' + loginError.message);
+                else {
+                    alert('Login berhasil!');
+                    closeAuthModal();
+                    window.location.reload();
+                }
+            }
+        }
+
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+
+            const { error } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                alert('Gagal mengubah password: ' + error.message);
+            } else {
+                alert('Password berhasil diperbarui!');
+                closeSettingsModal();
+                document.getElementById('new-password').value = '';
+            }
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.href = '/';
         }
 
         function switchTab(tabName) {
@@ -673,9 +842,6 @@
                 contentPublic.classList.add('hidden');
             }
         }
-
-        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
-        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
 
         function openRegisterModal() {
             document.getElementById('register-modal').classList.remove('hidden');
@@ -707,19 +873,6 @@
             document.getElementById('submit-btn').innerText = "Simpan Perubahan";
             document.getElementById('delete-server-btn').classList.remove('hidden');
             openRegisterModal();
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('auth-email').value;
-            if (!email) return alert('Masukkan email!');
-            const { error } = await supabaseClient.auth.signInWithOtp({ email });
-            if (error) alert('Gagal: ' + error.message);
-            else { alert('Cek email kamu untuk link login!'); closeLoginModal(); }
-        }
-
-        async function handleLogout() {
-            await supabaseClient.auth.signOut();
-            window.location.href = '/';
         }
 
         async function fetchServers() {
