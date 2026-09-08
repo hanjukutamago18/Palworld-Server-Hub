@@ -74,7 +74,7 @@
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 24px; margin-bottom: 20px;
+            border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
@@ -88,15 +88,17 @@
             display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
         }
         .status-badge.offline { background-color: rgba(255, 71, 71, 0.1); color: #ff4747; border-color: rgba(255, 71, 71, 0.3); }
+        .status-badge.checking { background-color: rgba(255, 159, 67, 0.1); color: var(--accent-orange); border-color: rgba(255, 159, 67, 0.3); }
         .status-badge .dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
         .status-badge.offline .dot { background-color: #ff4747; box-shadow: 0 0 8px #ff4747; }
+        .status-badge.checking .dot { background-color: var(--accent-orange); box-shadow: 0 0 8px var(--accent-orange); }
 
         .grid-layout { display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 20px; }
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
 
         .section-title {
             color: var(--accent-pink); font-size: 0.85em; text-transform: uppercase;
-            letter-spacing: 1.5px; margin-bottom: 12px; font-weight: bold;
+            letter-spacing: 1.5px; margin-bottom: 0; font-weight: bold;
         }
         .section-title::before { content: "// "; }
 
@@ -141,7 +143,7 @@
             border-color: var(--accent-pink); color: #fff;
         }
 
-        /* List Server dengan Rounded Box & Efek Hover */
+        /* List Server dengan Rounded Box & Efek Hover Presisi */
         .server-item {
             background-color: #100c17;
             border: 1px solid var(--border-color);
@@ -251,16 +253,16 @@
 
             <!-- KONTEN TAB: PUBLIC SERVER -->
             <div class="card" id="tab-content-public">
-                <div class="flex-between" style="margin-bottom: 12px;">
-                    <div class="section-title" style="margin: 0;">Public Server</div>
+                <div class="flex-between" style="margin-bottom: 14px;">
+                    <div class="section-title">Public Server</div>
                 </div>
                 <div id="public-server-list" class="info-text">Memuat daftar public server...</div>
             </div>
 
             <!-- KONTEN TAB: SERVER SAYA -->
             <div class="card hidden" id="tab-content-my">
-                <div class="flex-between" style="margin-bottom: 12px;">
-                    <div class="section-title" style="margin: 0;">Server Saya</div>
+                <div class="flex-between" style="margin-bottom: 14px;">
+                    <div class="section-title">Server Saya</div>
                     <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
                 </div>
                 <div id="my-server-list" class="info-text">Memuat server Anda...</div>
@@ -270,7 +272,7 @@
             <div class="modal-overlay hidden" id="register-modal">
                 <div class="modal-card">
                     <div class="flex-between" style="margin-bottom: 15px;">
-                        <div class="section-title" id="form-title" style="margin: 0;">Daftarkan Server Baru</div>
+                        <div class="section-title" id="form-title">Daftarkan Server Baru</div>
                         <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="closeRegisterModal()">✕ Tutup</button>
                     </div>
 
@@ -357,7 +359,7 @@
             <!-- WIDGET STATISTIK LIVE -->
             <div class="card">
                 <div class="flex-between" style="margin-bottom: 10px;">
-                    <div class="section-title" style="margin: 0;">Status & Statistik Live</div>
+                    <div class="section-title">Status & Statistik Live</div>
                     <button class="btn" style="padding: 6px 14px; font-size: 0.8em;" onclick="loadLiveStats()">🔄 Refresh</button>
                 </div>
                 
@@ -375,14 +377,14 @@
 
             <!-- DAFTAR PEMAIN ONLINE -->
             <div class="card">
-                <div class="section-title">Daftar Pemain Online</div>
+                <div class="section-title" style="margin-bottom: 12px;">Daftar Pemain Online</div>
                 <div id="players-list-content" class="info-text">Memuat daftar pemain...</div>
             </div>
 
             <div class="grid-layout">
                 <div>
                     <div class="card">
-                        <div class="section-title">Tentang Server</div>
+                        <div class="section-title" style="margin-bottom: 12px;">Tentang Server</div>
                         <div class="info-text" id="det-desc">-</div>
                         
                         <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
@@ -412,7 +414,7 @@
                 <div>
                     <!-- KONEKSI & PASSWORD -->
                     <div class="card">
-                        <div class="section-title">Koneksi Server</div>
+                        <div class="section-title" style="margin-bottom: 12px;">Koneksi Server</div>
                         <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
                         
                         <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
@@ -435,7 +437,7 @@
 
                     <!-- TOMBOL DONASI / SUPPORT -->
                     <div class="card hidden" id="support-card" style="text-align: center;">
-                        <div class="section-title" style="text-align: left;">Dukung Server</div>
+                        <div class="section-title" style="text-align: left; margin-bottom: 12px;">Dukung Server</div>
                         <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa.</p>
                         <a href="#" id="det-support-link" target="_blank" class="btn-support">☕ Support / Donasi Server</a>
                     </div>
@@ -571,6 +573,7 @@
                     myListDiv.innerHTML = `Anda belum mendaftarkan server. Klik tombol "+ Tambah Server Baru" di atas.`;
                 } else {
                     myListDiv.innerHTML = myServers.map(srv => renderServerItem(srv, true)).join('');
+                    fetchServerStatuses(myServers);
                 }
             }
 
@@ -580,26 +583,69 @@
                 publicListDiv.innerHTML = `Belum ada public server yang tersedia.`;
             } else {
                 publicListDiv.innerHTML = publicServers.map(srv => renderServerItem(srv, false)).join('');
+                fetchServerStatuses(publicServers);
             }
         }
 
         function renderServerItem(srv, isOwner) {
-            const statusLabel = srv.is_public === false 
+            const statusLabel = isOwner ? (srv.is_public === false 
                 ? '<span style="font-size: 0.75em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255,159,67,0.3); margin-left: 8px;">Private</span>' 
-                : '<span style="font-size: 0.75em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(163,255,71,0.3); margin-left: 8px;">Public</span>';
+                : '<span style="font-size: 0.75em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(163,255,71,0.3); margin-left: 8px;">Public</span>') : '';
 
             return `
                 <div class="server-item">
-                    <div>
-                        <strong style="color: #fff; font-size: 1.15em;">${srv.name}</strong> ${isOwner ? statusLabel : ''}<br>
-                        <span style="font-size: 0.85em; color: var(--text-muted);">Alamat: ${srv.ip}</span>
+                    <div style="flex: 1; min-width: 240px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                            <strong style="color: #fff; font-size: 1.15em;">${srv.name}</strong> ${statusLabel}
+                            <div class="status-badge checking" id="badge-${srv.slug}" style="padding: 3px 10px; font-size: 0.75em; margin-left: auto;">
+                                <div class="dot"></div><span id="badge-text-${srv.slug}">MEMERIKSA...</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; font-family: monospace;">
+                            📍 ${srv.ip}
+                        </div>
+                        <div style="display: flex; gap: 15px; font-size: 0.8em; color: var(--text-muted); flex-wrap: wrap;">
+                            <span>👥 Pemain: <strong id="players-${srv.slug}" style="color: #fff;">- / 32</strong></span>
+                            <span>⚙️ Versi: <strong id="version-${srv.slug}" style="color: #fff;">-</strong></span>
+                        </div>
                     </div>
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
                         <a href="/server/${srv.slug}" class="btn" style="padding: 8px 16px; font-size: 0.85em;">Status</a>
                         ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 8px 16px; font-size: 0.85em;">Edit</a>` : ''}
                     </div>
                 </div>
             `;
+        }
+
+        async function fetchServerStatuses(servers) {
+            servers.forEach(async (srv) => {
+                const badge = document.getElementById(`badge-${srv.slug}`);
+                const badgeText = document.getElementById(`badge-text-${srv.slug}`);
+                const playersElem = document.getElementById(`players-${srv.slug}`);
+                const versionElem = document.getElementById(`version-${srv.slug}`);
+
+                if (!badge) return;
+
+                try {
+                    const res = await fetch(`/api/status?ip=${encodeURIComponent(srv.ip)}&api_port=${encodeURIComponent(srv.api_port)}&password=${encodeURIComponent(srv.admin_password)}`);
+                    const json = await res.json();
+
+                    if (json.online && json.info) {
+                        badge.className = "status-badge";
+                        if (badgeText) badgeText.innerText = "ONLINE";
+                        if (versionElem) versionElem.innerText = json.info.version || "-";
+                        const count = json.players && json.players.players ? json.players.players.length : 0;
+                        if (playersElem) playersElem.innerText = `${count} / 32`;
+                    } else {
+                        throw new Error("Offline");
+                    }
+                } catch (err) {
+                    if (badge) badge.className = "status-badge offline";
+                    if (badgeText) badgeText.innerText = "OFFLINE";
+                    if (versionElem) versionElem.innerText = "Offline";
+                    if (playersElem) playersElem.innerText = "0 / 32";
+                }
+            });
         }
 
         async function loadServerDetail(slug) {
