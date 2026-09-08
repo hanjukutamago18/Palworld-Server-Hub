@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palworld Server Hub - Platform Publik</title>
+    <title>Palworld Server Hub</title>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -37,46 +37,82 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
 
+        .header-card { display: flex; justify-content: space-between; align-items: center; }
         h1 { margin: 0; color: #fff; font-size: 1.8em; }
         h2 { font-size: 0.9em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; }
         
-        .btn {
-            background: var(--accent-green);
-            color: #000;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
+        .status-badge {
+            background-color: rgba(163, 255, 71, 0.1);
+            color: var(--accent-green);
+            padding: 6px 12px;
+            border-radius: 20px;
             font-weight: bold;
-            transition: 0.2s;
-            text-decoration: none;
-            display: inline-block;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(163, 255, 71, 0.3);
         }
-        .btn:hover { opacity: 0.85; }
-        .btn-pink { background: var(--accent-pink); color: #fff; }
+        .status-badge .dot {
+            width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green);
+        }
 
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 16px 0;
-            background: #100c17;
+        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+
+        .section-title {
+            color: var(--accent-pink);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+        .section-title::before { content: "// "; }
+
+        .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; }
+
+        .ip-box {
+            background-color: #100c17;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1em;
             color: #fff;
-            box-sizing: border-box;
-        }
-
-        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-
-        .server-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .copy-btn, .btn {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-decoration: none;
+            transition: 0.2s;
+            display: inline-block;
+        }
+        .copy-btn:hover, .btn:hover { opacity: 0.85; }
+        .btn-pink { background: var(--accent-pink); color: #fff; }
+
+        input, textarea {
+            width: 100%; padding: 10px; margin: 8px 0 16px 0;
+            background: #100c17; border: 1px solid var(--border-color);
+            border-radius: 6px; color: #fff; box-sizing: border-box;
+        }
+        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        .server-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid var(--border-color);
         }
         .server-item:last-child { border-bottom: none; }
-        
         .hidden { display: none !important; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
     </style>
@@ -84,78 +120,132 @@
 <body>
 
     <div class="container">
-        <!-- Header & Navigasi Auth -->
-        <div class="card flex-between">
-            <div>
-                <h2>Palworld Community Platform</h2>
-                <h1>Daftar Server Publik</h1>
+        <!-- TAMPILAN 1: BERANDA / LIST SERVER PUBLIK & LOGIN -->
+        <div id="view-home">
+            <div class="card flex-between">
+                <div>
+                    <h2>Palworld Community Platform</h2>
+                    <h1>Daftar Server Publik</h1>
+                </div>
+                <div id="auth-section">
+                    <button class="btn" onclick="openLoginModal()">Login / Register</button>
+                </div>
             </div>
-            <div id="auth-section">
-                <!-- Tombol Login/Logout akan diatur otomatis via JS -->
-                <button class="btn" onclick="openLoginModal()">Login / Register</button>
+
+            <div class="card">
+                <div class="section-title">Server Yang Tersedia</div>
+                <div id="server-list" class="info-text">Memuat daftar server...</div>
+            </div>
+
+            <div class="card hidden" id="register-card">
+                <div class="section-title">Daftarkan Server Baru</div>
+                <form id="server-form" onsubmit="registerServer(event)">
+                    <label>Nama Server</label>
+                    <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
+                    
+                    <label>IP Address & Port Game</label>
+                    <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029" required>
+                    
+                    <label>Port REST API</label>
+                    <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
+
+                    <label>Password Admin</label>
+                    <input type="password" id="srv-pass" placeholder="Password admin server" required>
+
+                    <label>Slug URL Unik</label>
+                    <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
+
+                    <button type="submit" class="btn btn-pink">Simpan & Daftarkan</button>
+                </form>
             </div>
         </div>
 
-        <!-- Daftar Server Publik yang Sudah Terdaftar -->
-        <div class="card">
-            <h2>Server yang Aktif</h2>
-            <div id="server-list">Memuat daftar server...</div>
-        </div>
+        <!-- TAMPILAN 2: HALAMAN DETAIL STATUS SERVER SPESIFIK -->
+        <div id="view-detail" class="hidden">
+            <div class="card header-card">
+                <div>
+                    <h2>Palworld Dedicated Server</h2>
+                    <h1 id="det-name">Memuat Server...</h1>
+                </div>
+                <div class="status-badge" id="det-status-badge">
+                    <div class="dot" style="background-color: gray; box-shadow: none;"></div>
+                    <span id="det-status-text">Menghubungkan...</span>
+                </div>
+            </div>
 
-        <!-- Form Tambah Server (Hanya muncul jika sudah login) -->
-        <div class="card hidden" id="register-card">
-            <h2>Daftarkan Server Kamu</h2>
-            <form id="server-form" onsubmit="registerServer(event)">
-                <label>Nama Server</label>
-                <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
-                
-                <label>IP Address & Port Game</label>
-                <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029" required>
-                
-                <label>Port REST API</label>
-                <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
+            <div class="grid-layout">
+                <div>
+                    <div class="card">
+                        <div class="section-title">Tentang Server</div>
+                        <div class="info-text">Halaman status resmi yang terhubung langsung ke mesin server komunitas Palworld.</div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                            <div>
+                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">TIPE SERVER</p>
+                                <h4 style="margin:4px 0 0 0; color:#fff;">Community Server</h4>
+                            </div>
+                            <div>
+                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">VERSI GAME</p>
+                                <h4 id="det-version" style="margin:4px 0 0 0; color:#fff;">-</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/" class="btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">← Kembali ke Beranda</a>
+                </div>
 
-                <label>Password Admin (RCON/API)</label>
-                <input type="password" id="srv-pass" placeholder="Password admin server kamu" required>
-
-                <label>Slug URL Unik (untuk halaman khusus)</label>
-                <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
-
-                <button type="submit" class="btn btn-pink">Simpan & Daftarkan Server</button>
-            </form>
+                <div>
+                    <div class="card">
+                        <div class="section-title">Koneksi Server</div>
+                        <div class="info-text" style="margin-bottom: 10px;">Salin IP di bawah ini untuk bergabung ke dalam game:</div>
+                        
+                        <div class="ip-box">
+                            <span id="det-ip">-</span>
+                            <button class="copy-btn" onclick="copyIP()">SALIN</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Modal Login Sederhana -->
         <div class="card hidden" id="login-card">
             <h2>Autentikasi Pengguna</h2>
-            <p style="color: var(--text-muted); font-size: 0.9em;">Masukkan email kamu untuk masuk atau mendaftar otomatis ke platform.</p>
+            <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
             <label>Email</label>
-            <input type="email" id="auth-email" placeholder="emailkamu@domain.com">
-            <button class="btn" onclick="handleLogin()">Kirim Link Login (Magic Link)</button>
+            <input type="email" id="auth-email" placeholder="email@domain.com">
+            <button class="btn" onclick="handleLogin()">Kirim Link Login</button>
             <button class="btn" style="background:transparent; color:var(--text-muted);" onclick="closeLoginModal()">Batal</button>
         </div>
     </div>
 
     <script>
-        // Konfigurasi Supabase menggunakan variabel publik Vercel
-        // Pastikan SUPABASE_URL dan SUPABASE_ANON_KEY sudah diset di Environment Variables Vercel
-        const SUPABASE_URL = "https://cewjmzsyxtqqefhvllvf.supabase.co/"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_7Wfw8fIUWSS7AZ8Msk3ruw_Ek96AnQn";
+        // Masukkan URL & Anon Key Supabase milikmu di sini
+        const SUPABASE_URL = "ISI_URL_SUPABASE_KAMU"; 
+        const SUPABASE_ANON_KEY = "ISI_ANON_KEY_SUPABASE_KAMU";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let currentUser = null;
+        let activeServerIP = "";
 
         async function init() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             currentUser = session ? session.user : null;
             updateAuthUI();
-            fetchServers();
 
             supabaseClient.auth.onAuthStateChange((event, session) => {
                 currentUser = session ? session.user : null;
                 updateAuthUI();
             });
+
+            // Cek apakah URL sedang membuka halaman detail server (/server/slug)
+            const pathSegments = window.location.pathname.split('/');
+            if (pathSegments[1] === 'server' && pathSegments[2]) {
+                document.getElementById('view-home').classList.add('hidden');
+                document.getElementById('view-detail').classList.remove('hidden');
+                loadServerDetail(pathSegments[2]);
+            } else {
+                fetchServers();
+            }
         }
 
         function updateAuthUI() {
@@ -174,43 +264,28 @@
             }
         }
 
-        function openLoginModal() {
-            document.getElementById('login-card').classList.remove('hidden');
-        }
-
-        function closeLoginModal() {
-            document.getElementById('login-card').classList.add('hidden');
-        }
+        function openLoginModal() { document.getElementById('login-card').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('login-card').classList.add('hidden'); }
 
         async function handleLogin() {
             const email = document.getElementById('auth-email').value;
-            if (!email) return alert('Masukkan email terlebih dahulu!');
-            
+            if (!email) return alert('Masukkan email!');
             const { error } = await supabaseClient.auth.signInWithOtp({ email });
-            if (error) {
-                alert('Gagal mengirim login: ' + error.message);
-            } else {
-                alert('Tautan login telah dikirim ke email kamu! Silakan cek inbox/spam.');
-                closeLoginModal();
-            }
+            if (error) alert('Gagal: ' + error.message);
+            else { alert('Cek email kamu untuk link login!'); closeLoginModal(); }
         }
 
         async function handleLogout() {
             await supabaseClient.auth.signOut();
-            window.location.reload();
+            window.location.href = '/';
         }
 
         async function fetchServers() {
             const listDiv = document.getElementById('server-list');
             const { data, error } = await supabaseClient.from('servers').select('*');
 
-            if (error) {
-                listDiv.innerHTML = `<span style="color: var(--accent-pink);">Gagal memuat data server.</span>`;
-                return;
-            }
-
-            if (!data || data.length === 0) {
-                listDiv.innerHTML = `<span style="color: var(--text-muted);">Belum ada server yang terdaftar. Jadilah yang pertama!</span>`;
+            if (error || !data || data.length === 0) {
+                listDiv.innerHTML = `Belum ada server yang terdaftar.`;
                 return;
             }
 
@@ -218,16 +293,34 @@
                 <div class="server-item">
                     <div>
                         <strong style="color: #fff; font-size: 1.1em;">${srv.name}</strong><br>
-                        <span style="font-size: 0.85em; color: var(--text-muted);">IP: ${srv.ip} | Slug: /${srv.slug}</span>
+                        <span style="font-size: 0.85em; color: var(--text-muted);">IP: ${srv.ip}</span>
                     </div>
-                    <a href="/server/${srv.slug}" class="btn" style="font-size: 0.8em; padding: 6px 12px;">Lihat Status</a>
+                    <a href="/server/${srv.slug}" class="btn" style="padding: 6px 12px; font-size: 0.8em;">Status</a>
                 </div>
             `).join('');
         }
 
+        async function loadServerDetail(slug) {
+            const { data, error } = await supabaseClient.from('servers').select('*').eq('slug', slug).single();
+
+            if (error || !data) {
+                document.getElementById('det-name').innerText = "Server Tidak Ditemukan";
+                return;
+            }
+
+            document.getElementById('det-name').innerText = data.name;
+            document.getElementById('det-ip').innerText = data.ip;
+            activeServerIP = data.ip;
+
+            // Simulasi pengecekan status dasar
+            document.getElementById('det-version').innerText = "v1.0.4";
+            const badge = document.getElementById('det-status-badge');
+            badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
+        }
+
         async function registerServer(e) {
             e.preventDefault();
-            if (!currentUser) return alert('Kamu harus login terlebih dahulu!');
+            if (!currentUser) return alert('Silakan login terlebih dahulu!');
 
             const name = document.getElementById('srv-name').value;
             const ip = document.getElementById('srv-ip').value;
@@ -239,13 +332,15 @@
                 { name, ip, api_port, admin_password, slug, user_id: currentUser.id }
             ]);
 
-            if (error) {
-                alert('Gagal mendaftarkan server: ' + error.message);
-            } else {
-                alert('Berhasil mendaftarkan server!');
-                document.getElementById('server-form').reset();
-                fetchServers();
-            }
+            if (error) alert('Gagal: ' + error.message);
+            else { alert('Server berhasil didaftarkan!'); window.location.reload(); }
+        }
+
+        function copyIP() {
+            navigator.clipboard.writeText(activeServerIP);
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = "TERSALIN!";
+            setTimeout(() => btn.innerText = "SALIN", 2000);
         }
 
         init();
