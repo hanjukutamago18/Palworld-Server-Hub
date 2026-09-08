@@ -741,7 +741,6 @@
             const username = document.getElementById('reg-username').value.trim();
             const password = document.getElementById('reg-password').value;
 
-            // 1. Register dengan Supabase Auth
             const { data, error } = await supabaseClient.auth.signUp({
                 email,
                 password,
@@ -753,7 +752,6 @@
                 return;
             }
 
-            // 2. Simpan mapping username -> email ke tabel profiles
             if (data.user) {
                 const { error: profileError } = await supabaseClient.from('profiles').insert([
                     { id: data.user.id, username: username, email: email }
@@ -773,7 +771,6 @@
             const username = document.getElementById('login-username').value.trim();
             const password = document.getElementById('login-password').value;
 
-            // 1. Cari email berdasarkan username di tabel profiles
             const { data: profileData, error: profileError } = await supabaseClient
                 .from('profiles')
                 .select('email')
@@ -785,7 +782,6 @@
                 return;
             }
 
-            // 2. Login menggunakan email yang ditemukan dan password
             const { error: loginError } = await supabaseClient.auth.signInWithPassword({
                 email: profileData.email,
                 password: password
@@ -793,11 +789,10 @@
 
             if (loginError) {
                 alert('Gagal login: ' + loginError.message);
-                else {
-                    alert('Login berhasil!');
-                    closeAuthModal();
-                    window.location.reload();
-                }
+            } else {
+                alert('Login berhasil!');
+                closeAuthModal();
+                window.location.reload();
             }
         }
 
