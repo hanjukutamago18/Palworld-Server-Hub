@@ -460,7 +460,13 @@
                             <div class="section-title" style="margin-bottom: 12px;">Koneksi Server</div>
                             <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
                             
-                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
+                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Link Halaman Server</div>
+                            <div class="ip-box">
+                                <span id="det-page-link">-</span>
+                                <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyPageLink()">SALIN</button>
+                            </div>
+
+                            <div style="font-size: 0.75em; color: var(--text-muted); margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
                             <div class="ip-box">
                                 <span id="det-ip">-</span>
                                 <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
@@ -612,6 +618,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUser = null;
         let activeServerIP = "";
+        let activePageLink = "";
         let plainServerPassword = "";
         let isPasswordVisible = false;
         let cachedServerData = null;
@@ -884,6 +891,10 @@
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
 
+            // Set Page Link Box
+            activePageLink = window.location.origin + '/server/' + data.slug;
+            document.getElementById('det-page-link').innerText = activePageLink;
+
             document.getElementById('det-vcpu').innerText = data.vcpu || "-";
             document.getElementById('det-ram').innerText = data.ram || "-";
             document.getElementById('det-disk').innerText = data.disk || "-";
@@ -1008,6 +1019,14 @@
         function copyPassword() {
             navigator.clipboard.writeText(plainServerPassword);
             const btn = document.getElementById('copy-pass-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "TERSALIN!";
+            setTimeout(() => btn.innerText = originalText, 2000);
+        }
+
+        function copyPageLink() {
+            navigator.clipboard.writeText(activePageLink);
+            const btn = event.target;
             const originalText = btn.innerText;
             btn.innerText = "TERSALIN!";
             setTimeout(() => btn.innerText = originalText, 2000);
