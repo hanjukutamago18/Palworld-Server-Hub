@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Server Palworld</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
+        h1 { color: #333; }
+        p { font-size: 1.2em; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Server Palworld</h1>
+        <p id="status">Memuat status server...</p>
+        <p id="detail" style="font-size: 0.9em; color: #777;"></p>
+    </div>
+
+    <script>
+        async function cekStatus() {
+            try {
+                const response = await fetch('/api/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('status').innerText = "Server Online! 🟢"; 
+                    document.getElementById('detail').innerText = `Versi: ${data.version || 'Tidak diketahui'}`;
+                } else {
+                    document.getElementById('status').innerText = "Server Offline 🔴";
+                }
+            } catch (error) {
+                document.getElementById('status').innerText = "Gagal mengambil data.";
+            }
+        }
+        cekStatus();
+    </script>
+</body>
+</html>
