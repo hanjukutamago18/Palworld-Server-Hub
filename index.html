@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esther Sunny Yolk - Palworld Server</title>
+    <title>Palworld Server Hub - Platform Publik</title>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-main: #120e1c;
@@ -25,11 +27,7 @@
             justify-content: center;
         }
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
-
+        .container { max-width: 900px; width: 100%; }
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -39,231 +37,218 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
 
-        .header-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 { margin: 0; color: #fff; font-size: 1.8em; letter-spacing: 1px; }
+        h1 { margin: 0; color: #fff; font-size: 1.8em; }
         h2 { font-size: 0.9em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; }
         
-        .status-badge {
-            background-color: rgba(163, 255, 71, 0.1);
-            color: var(--accent-green);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.85em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(163, 255, 71, 0.3);
-        }
-        
-        .status-badge .dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-green);
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .grid-layout { grid-template-columns: 1fr; }
-        }
-
-        .section-title {
-            color: var(--accent-pink);
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-title::before { content: "//"; color: var(--accent-pink); opacity: 0.7; }
-
-        .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; }
-
-        .ip-box {
-            background-color: #100c17;
-            border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 1.1em;
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .copy-btn {
+        .btn {
             background: var(--accent-green);
             color: #000;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 10px 16px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.8em;
             transition: 0.2s;
-        }
-        
-        .copy-btn:hover { opacity: 0.8; }
-
-        .specs-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-
-        .spec-item p { margin: 0; font-size: 0.8em; color: var(--text-muted); }
-        .spec-item h4 { margin: 4px 0 0 0; color: #fff; font-size: 1em; font-weight: 500; }
-
-        .support-btn {
-            display: block;
-            width: 100%;
-            background: linear-gradient(90deg, #ff2a7a, #d6185d);
-            color: #fff;
-            text-align: center;
-            padding: 14px 0;
-            border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            margin-top: 15px;
+            display: inline-block;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-pink { background: var(--accent-pink); color: #fff; }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 16px 0;
+            background: #100c17;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #fff;
             box-sizing: border-box;
         }
 
-        .support-btn:hover { filter: brightness(1.2); box-shadow: 0 0 15px rgba(255, 42, 122, 0.4); }
+        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
+        .server-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .server-item:last-child { border-bottom: none; }
+        
+        .hidden { display: none !important; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Header -->
-        <div class="card header-card">
+        <!-- Header & Navigasi Auth -->
+        <div class="card flex-between">
             <div>
-                <h2>Palworld Dedicated Server</h2>
-                <h1 id="server-title">Memuat Server...</h1>
+                <h2>Palworld Community Platform</h2>
+                <h1>Daftar Server Publik</h1>
             </div>
-            <div class="status-badge" id="status-badge">
-                <div class="dot" style="background-color: gray; box-shadow: none;"></div>
-                <span id="status-text">Menghubungkan...</span>
+            <div id="auth-section">
+                <!-- Tombol Login/Logout akan diatur otomatis via JS -->
+                <button class="btn" onclick="openLoginModal()">Login / Register</button>
             </div>
         </div>
 
-        <div class="grid-layout">
-            <!-- Kolom Kiri -->
-            <div>
-                <div class="card">
-                    <div class="section-title">Tentang Server</div>
-                    <div class="info-text" id="server-desc">Mengambil informasi dari server...</div>
-                    
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <p>TIPE SERVER</p>
-                            <h4>Community Server</h4>
-                        </div>
-                        <div class="spec-item">
-                            <p>MAKSIMAL PEMAIN</p>
-                            <h4>32 Slot</h4>
-                        </div>
-                        <div class="spec-item">
-                            <p>VERSI GAME</p>
-                            <h4 id="game-version">-</h4>
-                        </div>
-                        <div class="spec-item">
-                            <p>KATA SANDI</p>
-                            <h4>Dibutuhkan</h4>
-                        </div>
-                    </div>
-                </div>
+        <!-- Daftar Server Publik yang Sudah Terdaftar -->
+        <div class="card">
+            <h2>Server yang Aktif</h2>
+            <div id="server-list">Memuat daftar server...</div>
+        </div>
 
-                <div class="card">
-                    <div class="section-title">Dukung Server Ini</div>
-                    <div class="info-text">Server ini didedikasikan untuk komunitas Aziel Esther. Dukungan kamu sangat membantu untuk memperpanjang masa aktif server (hosting).</div>
-                    <a href="https://trakteer.id/Hanjukutamago/tip" target="_blank" class="support-btn">DONASI VIA TRAKTEER</a>
-                </div>
-            </div>
+        <!-- Form Tambah Server (Hanya muncul jika sudah login) -->
+        <div class="card hidden" id="register-card">
+            <h2>Daftarkan Server Kamu</h2>
+            <form id="server-form" onsubmit="registerServer(event)">
+                <label>Nama Server</label>
+                <input type="text" id="srv-name" placeholder="Contoh: Esther Sunny Yolk" required>
+                
+                <label>IP Address & Port Game</label>
+                <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029" required>
+                
+                <label>Port REST API</label>
+                <input type="text" id="srv-api" placeholder="Contoh: 28045" required>
 
-            <!-- Kolom Kanan -->
-            <div>
-                <div class="card">
-                    <div class="section-title">Koneksi Server</div>
-                    <div class="info-text" style="margin-bottom: 10px;">Salin IP di bawah ini dan masukkan ke menu Multiplayer di dalam game.</div>
-                    
-                    <div class="ip-box">
-                        <span id="ip-address">15.235.180.31:28029</span>
-                        <button class="copy-btn" onclick="copyIP()">SALIN</button>
-                    </div>
-                    
-                    <div class="info-text" style="font-size: 0.85em;">
-                        <i>Catatan: Gunakan port 28029 untuk bermain, bukan port API.</i>
-                    </div>
-                </div>
-            </div>
+                <label>Password Admin (RCON/API)</label>
+                <input type="password" id="srv-pass" placeholder="Password admin server kamu" required>
+
+                <label>Slug URL Unik (untuk halaman khusus)</label>
+                <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
+
+                <button type="submit" class="btn btn-pink">Simpan & Daftarkan Server</button>
+            </form>
+        </div>
+
+        <!-- Modal Login Sederhana -->
+        <div class="card hidden" id="login-card">
+            <h2>Autentikasi Pengguna</h2>
+            <p style="color: var(--text-muted); font-size: 0.9em;">Masukkan email kamu untuk masuk atau mendaftar otomatis ke platform.</p>
+            <label>Email</label>
+            <input type="email" id="auth-email" placeholder="emailkamu@domain.com">
+            <button class="btn" onclick="handleLogin()">Kirim Link Login (Magic Link)</button>
+            <button class="btn" style="background:transparent; color:var(--text-muted);" onclick="closeLoginModal()">Batal</button>
         </div>
     </div>
 
     <script>
-        async function fetchStatus() {
-            try {
-                const response = await fetch('/api/status');
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Update UI dengan data dari API
-                    document.getElementById('server-title').innerText = data.servername || "Esther Sunny Yolk";
-                    document.getElementById('server-desc').innerText = data.description || "Selamat datang di server komunitas!";
-                    document.getElementById('game-version').innerText = data.version || "Tidak diketahui";
-                    
-                    // Update Status Badge menjadi Online
-                    const badge = document.getElementById('status-badge');
-                    badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
-                    badge.style.backgroundColor = "rgba(163, 255, 71, 0.1)";
-                    badge.style.color = "var(--accent-green)";
-                    badge.style.borderColor = "rgba(163, 255, 71, 0.3)";
+        // Konfigurasi Supabase menggunakan variabel publik Vercel
+        // Pastikan SUPABASE_URL dan SUPABASE_ANON_KEY sudah diset di Environment Variables Vercel
+        const SUPABASE_URL = "ISI_URL_SUPABASE_KAMU"; 
+        const SUPABASE_ANON_KEY = "ISI_ANON_KEY_SUPABASE_KAMU";
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-                } else {
-                    setOffline();
-                }
-            } catch (error) {
-                setOffline();
+        let currentUser = null;
+
+        async function init() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            currentUser = session ? session.user : null;
+            updateAuthUI();
+            fetchServers();
+
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                currentUser = session ? session.user : null;
+                updateAuthUI();
+            });
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('auth-section');
+            const registerCard = document.getElementById('register-card');
+
+            if (currentUser) {
+                authSection.innerHTML = `
+                    <span style="font-size: 0.9em; margin-right: 15px; color: var(--text-muted);">${currentUser.email}</span>
+                    <button class="btn btn-pink" onclick="handleLogout()">Logout</button>
+                `;
+                registerCard.classList.remove('hidden');
+            } else {
+                authSection.innerHTML = `<button class="btn" onclick="openLoginModal()">Login / Register</button>`;
+                registerCard.classList.add('hidden');
             }
         }
 
-        function setOffline() {
-            const badge = document.getElementById('status-badge');
-            badge.innerHTML = `<div class="dot" style="background-color: #ff2a7a; box-shadow: 0 0 8px #ff2a7a;"></div><span style="color: #ff2a7a;">OFFLINE</span>`;
-            badge.style.backgroundColor = "rgba(255, 42, 122, 0.1)";
-            badge.style.borderColor = "rgba(255, 42, 122, 0.3)";
+        function openLoginModal() {
+            document.getElementById('login-card').classList.remove('hidden');
         }
 
-        function copyIP() {
-            navigator.clipboard.writeText("15.235.180.31:28029");
-            const btn = document.querySelector('.copy-btn');
-            btn.innerText = "TERSALIN!";
-            setTimeout(() => btn.innerText = "SALIN", 2000);
+        function closeLoginModal() {
+            document.getElementById('login-card').classList.add('hidden');
         }
 
-        fetchStatus();
+        async function handleLogin() {
+            const email = document.getElementById('auth-email').value;
+            if (!email) return alert('Masukkan email terlebih dahulu!');
+            
+            const { error } = await supabaseClient.auth.signInWithOtp({ email });
+            if (error) {
+                alert('Gagal mengirim login: ' + error.message);
+            } else {
+                alert('Tautan login telah dikirim ke email kamu! Silakan cek inbox/spam.');
+                closeLoginModal();
+            }
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        async function fetchServers() {
+            const listDiv = document.getElementById('server-list');
+            const { data, error } = await supabaseClient.from('servers').select('*');
+
+            if (error) {
+                listDiv.innerHTML = `<span style="color: var(--accent-pink);">Gagal memuat data server.</span>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                listDiv.innerHTML = `<span style="color: var(--text-muted);">Belum ada server yang terdaftar. Jadilah yang pertama!</span>`;
+                return;
+            }
+
+            listDiv.innerHTML = data.map(srv => `
+                <div class="server-item">
+                    <div>
+                        <strong style="color: #fff; font-size: 1.1em;">${srv.name}</strong><br>
+                        <span style="font-size: 0.85em; color: var(--text-muted);">IP: ${srv.ip} | Slug: /${srv.slug}</span>
+                    </div>
+                    <a href="/server/${srv.slug}" class="btn" style="font-size: 0.8em; padding: 6px 12px;">Lihat Status</a>
+                </div>
+            `).join('');
+        }
+
+        async function registerServer(e) {
+            e.preventDefault();
+            if (!currentUser) return alert('Kamu harus login terlebih dahulu!');
+
+            const name = document.getElementById('srv-name').value;
+            const ip = document.getElementById('srv-ip').value;
+            const api_port = document.getElementById('srv-api').value;
+            const admin_password = document.getElementById('srv-pass').value;
+            const slug = document.getElementById('srv-slug').value;
+
+            const { error } = await supabaseClient.from('servers').insert([
+                { name, ip, api_port, admin_password, slug, user_id: currentUser.id }
+            ]);
+
+            if (error) {
+                alert('Gagal mendaftarkan server: ' + error.message);
+            } else {
+                alert('Berhasil mendaftarkan server!');
+                document.getElementById('server-form').reset();
+                fetchServers();
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
