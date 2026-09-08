@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palworld Server Hub</title>
+    <!-- Favicon / Icon Website -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -774,7 +776,12 @@
         async function handleLogin() {
             const email = document.getElementById('auth-email').value;
             if (!email) return alert('Masukkan email!');
-            const { error } = await supabaseClient.auth.signInWithOtp({ email });
+            const { error } = await supabaseClient.auth.signInWithOtp({ 
+                email,
+                options: {
+                    emailRedirectTo: window.location.origin
+                }
+            });
             if (error) alert('Gagal: ' + error.message);
             else { alert('Cek email kamu untuk link login!'); closeLoginModal(); }
         }
@@ -895,7 +902,6 @@
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
 
-            // Set Clean Short Page Link Display & Full Link for Copying
             fullPageLink = window.location.origin + '/server/' + data.slug;
             document.getElementById('det-page-link').innerText = '/server/' + data.slug;
 
@@ -1083,7 +1089,7 @@
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
-                const { error } = await supabaseClient.from('servers').insert([
+                const { error } = await supabaseClient.from('servers'].insert([
                     { name, description, ip, categories: categoriesStr, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
