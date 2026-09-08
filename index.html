@@ -295,6 +295,19 @@
         .stat-box { background: #100c17; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; }
         .stat-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
         .stat-value { font-size: 1.2em; font-weight: bold; color: #fff; }
+
+        .checkbox-group {
+            background: #100c17; border: 1px solid var(--border-color);
+            padding: 12px 16px; border-radius: 8px; margin: 8px 0 16px 0;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .checkbox-label {
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            color: #fff; font-size: 0.9em; text-transform: none; font-weight: 500;
+        }
+        .checkbox-label input {
+            width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--accent-pink);
+        }
     </style>
 </head>
 <body>
@@ -407,6 +420,9 @@
                             <div class="info-text" id="det-desc">-</div>
                             
                             <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">KATEGORI SERVER</p>
+                                <h4 id="det-categories" style="margin:4px 0 15px 0; color:var(--accent-green);">-</h4>
+
                                 <p style="margin:0; font-size:0.8em; color:var(--text-muted);">METODE JOIN</p>
                                 <h4 id="det-join" style="margin:4px 0 15px 0; color:#fff;">-</h4>
 
@@ -533,11 +549,19 @@
                     <label>IP Address / Domain URL & Port Game</label>
                     <input type="text" id="srv-ip" placeholder="Contoh: 15.235.180.31:28029 atau server.domain.com:28029" required>
                     
-                    <label>Cara Bergabung</label>
-                    <select id="srv-join">
-                        <option value="Community Server (Cari di dalam game)">Community Server (Cari via Menu In-Game)</option>
-                        <option value="Direct IP Connect (IP:Port)">Direct IP Connect (Masukkan IP:Port)</option>
-                    </select>
+                    <label>Kategori Server (Pilih lebih dari satu, PVE eksklusif)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" id="cat-pve" onchange="handleCategoryClick('pve')"> PVE (Eksklusif / Tidak bisa digabung)</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-pvp" onchange="handleCategoryClick('other')"> PVP</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-hardcore" onchange="handleCategoryClick('other')"> Hardcore</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-randomizer" onchange="handleCategoryClick('other')"> Randomizer</label>
+                    </div>
+
+                    <label>Cara Bergabung (Bisa pilih keduanya)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" id="join-community" checked> Cari nama di Community Server</label>
+                        <label class="checkbox-label"><input type="checkbox" id="join-ip"> Join via IP (Direct Connect)</label>
+                    </div>
 
                     <label>Password Server Game (Opsional)</label>
                     <input type="text" id="srv-server-pass" placeholder="Password untuk join server in-game">
@@ -592,6 +616,21 @@
         let isPasswordVisible = false;
         let cachedServerData = null;
         let activeTab = 'public';
+
+        function handleCategoryClick(type) {
+            const pve = document.getElementById('cat-pve');
+            const pvp = document.getElementById('cat-pvp');
+            const hardcore = document.getElementById('cat-hardcore');
+            const randomizer = document.getElementById('cat-randomizer');
+
+            if (type === 'pve' && pve.checked) {
+                pvp.checked = false;
+                hardcore.checked = false;
+                randomizer.checked = false;
+            } else if (type === 'other' && (pvp.checked || hardcore.checked || randomizer.checked)) {
+                pve.checked = false;
+            }
+        }
 
         async function init() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -691,7 +730,19 @@
             document.getElementById('srv-name').value = data.name || '';
             document.getElementById('srv-desc').value = data.description || '';
             document.getElementById('srv-ip').value = data.ip || '';
-            document.getElementById('srv-join').value = data.join_method || 'Community Server';
+            
+            // Set Categories Checkboxes
+            const cats = (data.categories || '').split(',').map(c => c.trim());
+            document.getElementById('cat-pve').checked = cats.includes('PVE');
+            document.getElementById('cat-pvp').checked = cats.includes('PVP');
+            document.getElementById('cat-hardcore').checked = cats.includes('Hardcore');
+            document.getElementById('cat-randomizer').checked = cats.includes('Randomizer');
+
+            // Set Join Method Checkboxes
+            const joins = (data.join_method || '').split(',').map(j => j.trim());
+            document.getElementById('join-community').checked = joins.some(j => j.toLowerCase().includes('community'));
+            document.getElementById('join-ip').checked = joins.some(j => j.toLowerCase().includes('ip') || j.toLowerCase().includes('direct'));
+
             document.getElementById('srv-server-pass').value = data.server_password || '';
             document.getElementById('srv-discord').value = data.discord_link || '';
             document.getElementById('srv-support').value = data.support_link || '';
@@ -757,12 +808,15 @@
                 ? '<span style="font-size: 0.7em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,159,67,0.3);">Private</span>' 
                 : '<span style="font-size: 0.7em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(163,255,71,0.3);">Public</span>') : '';
 
+            const catBadge = srv.categories ? `<span style="font-size: 0.7em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(163,255,71,0.3);">${srv.categories}</span>` : '';
+
             return `
                 <div class="server-item" onclick="window.location.href='/server/${srv.slug}'">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <strong style="color: #fff; font-size: 1.05em;">${srv.name}</strong> 
                             ${statusLabel}
+                            ${catBadge}
                             <div class="status-badge checking" id="badge-${listType}-${srv.slug}" style="padding: 2px 8px; font-size: 0.7em;">
                                 <div class="dot"></div><span id="badge-text-${listType}-${srv.slug}">MEMERIKSA...</span>
                             </div>
@@ -825,6 +879,7 @@
             cachedServerData = data;
             document.getElementById('det-name').innerText = data.name;
             document.getElementById('det-desc').innerText = data.description || "Tidak ada deskripsi.";
+            document.getElementById('det-categories').innerText = data.categories || "Umum";
             document.getElementById('det-join').innerText = data.join_method || "Community Server";
             document.getElementById('det-ip').innerText = data.ip;
             activeServerIP = data.ip;
@@ -962,11 +1017,32 @@
             e.preventDefault();
             if (!currentUser) return alert('Silakan login terlebih dahulu!');
 
+            // Ambil kategori yang dipilih
+            let categories = [];
+            if (document.getElementById('cat-pve').checked) categories.push('PVE');
+            if (document.getElementById('cat-pvp').checked) categories.push('PVP');
+            if (document.getElementById('cat-hardcore').checked) categories.push('Hardcore');
+            if (document.getElementById('cat-randomizer').checked) categories.push('Randomizer');
+
+            if (categories.length === 0) {
+                return alert('Pilih minimal satu kategori server!');
+            }
+
+            // Ambil metode join yang dipilih
+            let joinMethods = [];
+            if (document.getElementById('join-community').checked) joinMethods.push('Cari di Community Server');
+            if (document.getElementById('join-ip').checked) joinMethods.push('Join via IP (Direct Connect)');
+
+            if (joinMethods.length === 0) {
+                return alert('Pilih minimal satu metode cara bergabung!');
+            }
+
             const serverId = document.getElementById('edit-server-slug').value;
             const name = document.getElementById('srv-name').value;
             const description = document.getElementById('srv-desc').value;
             const ip = document.getElementById('srv-ip').value;
-            const join_method = document.getElementById('srv-join').value;
+            const categoriesStr = categories.join(', ');
+            const join_method = joinMethods.join(', ');
             const server_password = document.getElementById('srv-server-pass').value;
             const discord_link = document.getElementById('srv-discord').value;
             const support_link = document.getElementById('srv-support').value;
@@ -980,14 +1056,14 @@
 
             if (serverId) {
                 const { error } = await supabaseClient.from('servers').update({
-                    name, description, ip, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk
+                    name, description, ip, categories: categoriesStr, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk
                 }).eq('slug', serverId);
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
                 const { error } = await supabaseClient.from('servers').insert([
-                    { name, description, ip, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
+                    { name, description, ip, categories: categoriesStr, join_method, server_password, discord_link, support_link, api_port, admin_password, slug, is_public, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
 
                 if (error) alert('Gagal: ' + error.message);
@@ -1014,6 +1090,8 @@
             document.getElementById('server-form').reset();
             document.getElementById('edit-server-slug').value = "";
             document.getElementById('srv-is-public').checked = true;
+            document.getElementById('join-community').checked = true;
+            document.getElementById('join-ip').checked = false;
             document.getElementById('form-title').innerText = "Daftarkan Server Baru";
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
             document.getElementById('delete-server-btn').classList.add('hidden');
