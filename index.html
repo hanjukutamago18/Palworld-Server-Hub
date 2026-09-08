@@ -143,13 +143,13 @@
             border-color: var(--accent-pink); color: #fff;
         }
 
-        /* List Server Sangat Compact & Sejajar */
+        /* List Server Sangat Compact & Sejajar (Margin Diperkecil) */
         .server-item {
             background-color: #100c17;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
+            padding: 10px 16px;
+            margin-bottom: 6px;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -254,7 +254,8 @@
                 <div class="flex-between" style="margin-bottom: 12px;">
                     <div class="section-title">Public Server</div>
                 </div>
-                <div id="public-server-list" class="info-text">Memuat daftar public server...</div>
+                <!-- Menghapus class info-text agar line-height tidak mempengaruhi jarak -->
+                <div id="public-server-list">Memuat daftar public server...</div>
             </div>
 
             <!-- KONTEN TAB: SERVER SAYA -->
@@ -263,7 +264,7 @@
                     <div class="section-title">Server Saya</div>
                     <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
                 </div>
-                <div id="my-server-list" class="info-text">Memuat server Anda...</div>
+                <div id="my-server-list">Memuat server Anda...</div>
             </div>
 
             <!-- MODAL POP-UP: TAMBAH / EDIT SERVER -->
@@ -421,11 +422,12 @@
                             <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
                         </div>
 
-                        <div id="password-container" class="hidden" style="margin-top: 14px;">
+                        <!-- Struktur HTML Password Diperbarui agar mendukung "Tanpa Password" -->
+                        <div id="password-container" style="margin-top: 14px;">
                             <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server</div>
                             <div class="ip-box">
                                 <span id="det-pass-display" style="color: #fff;">••••••••</span>
-                                <div style="display: flex; gap: 6px; white-space: nowrap;">
+                                <div id="pass-btn-group" style="display: flex; gap: 6px; white-space: nowrap;">
                                     <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="padding: 6px 10px; font-size: 0.8em; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">LIHAT</button>
                                     <button class="copy-btn btn" id="copy-pass-btn" onclick="copyPassword()" style="padding: 6px 10px; font-size: 0.8em;">SALIN</button>
                                 </div>
@@ -559,26 +561,24 @@
             const { data, error } = await supabaseClient.from('servers').select('*');
 
             if (error || !data) {
-                publicListDiv.innerHTML = `Gagal memuat daftar server.`;
-                if (myListDiv) myListDiv.innerHTML = `Gagal memuat server Anda.`;
+                publicListDiv.innerHTML = `<div class="info-text">Gagal memuat daftar server.</div>`;
+                if (myListDiv) myListDiv.innerHTML = `<div class="info-text">Gagal memuat server Anda.</div>`;
                 return;
             }
 
-            // Render Server Saya (menggunakan prefix 'my')
             if (currentUser && myListDiv) {
                 const myServers = data.filter(srv => srv.user_id === currentUser.id);
                 if (myServers.length === 0) {
-                    myListDiv.innerHTML = `Anda belum mendaftarkan server. Klik tombol "+ Tambah Server Baru" di atas.`;
+                    myListDiv.innerHTML = `<div class="info-text">Anda belum mendaftarkan server. Klik tombol "+ Tambah Server Baru" di atas.</div>`;
                 } else {
                     myListDiv.innerHTML = myServers.map(srv => renderServerItem(srv, true, 'my')).join('');
                     fetchServerStatuses(myServers, 'my');
                 }
             }
 
-            // Render Public Server (menggunakan prefix 'pub')
             const publicServers = data.filter(srv => srv.is_public !== false);
             if (publicServers.length === 0) {
-                publicListDiv.innerHTML = `Belum ada public server yang tersedia.`;
+                publicListDiv.innerHTML = `<div class="info-text">Belum ada public server yang tersedia.</div>`;
             } else {
                 publicListDiv.innerHTML = publicServers.map(srv => renderServerItem(srv, false, 'pub')).join('');
                 fetchServerStatuses(publicServers, 'pub');
@@ -666,14 +666,25 @@
             document.getElementById('det-ram').innerText = data.ram || "-";
             document.getElementById('det-disk').innerText = data.disk || "-";
 
+            // LOGIKA PENAMPILAN PASSWORD / TANPA PASSWORD
+            const passDisplay = document.getElementById('det-pass-display');
+            const passBtnGroup = document.getElementById('pass-btn-group');
+            const revealBtn = document.getElementById('reveal-pass-btn');
+
             if (data.server_password && data.server_password.trim() !== "") {
                 plainServerPassword = data.server_password;
                 isPasswordVisible = false;
-                document.getElementById('password-container').classList.remove('hidden');
-                document.getElementById('det-pass-display').innerText = "••••••••";
-                document.getElementById('reveal-pass-btn').innerText = "LIHAT";
+                
+                passDisplay.innerText = "••••••••";
+                passDisplay.style.color = "#fff";
+                passDisplay.style.fontStyle = "normal";
+                revealBtn.innerText = "LIHAT";
+                passBtnGroup.classList.remove('hidden');
             } else {
-                document.getElementById('password-container').classList.add('hidden');
+                passDisplay.innerText = "Tanpa Password";
+                passDisplay.style.color = "var(--text-muted)";
+                passDisplay.style.fontStyle = "italic";
+                passBtnGroup.classList.add('hidden');
             }
 
             if (data.support_link && data.support_link.trim() !== "") {
