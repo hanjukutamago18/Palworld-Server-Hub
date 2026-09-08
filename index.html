@@ -21,25 +21,37 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 40px 20px; display: flex; justify-content: center;
+            margin: 0; padding: 30px 15px; display: flex; justify-content: center;
         }
 
         .container { max-width: 900px; width: 100%; }
+
+        /* Banner Poster Palworld */
+        .hero-banner {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
+
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 24px; margin-bottom: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border-radius: 14px; padding: 28px; margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
-        .header-card { display: flex; justify-content: space-between; align-items: center; }
+        .header-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         h1 { margin: 0; color: #fff; font-size: 1.8em; }
-        h2 { font-size: 0.9em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; }
+        h2 { font-size: 0.85em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 6px; }
         
         .status-badge {
             background-color: rgba(163, 255, 71, 0.1); color: var(--accent-green);
-            padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85em;
-            display: flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
+            padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 0.85em;
+            display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(163, 255, 71, 0.3);
         }
         .status-badge.offline { background-color: rgba(255, 71, 71, 0.1); color: #ff4747; border-color: rgba(255, 71, 71, 0.3); }
         .status-badge .dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
@@ -50,7 +62,7 @@
 
         .section-title {
             color: var(--accent-pink); font-size: 0.85em; text-transform: uppercase;
-            letter-spacing: 1.5px; margin-bottom: 16px;
+            letter-spacing: 1.5px; margin-bottom: 16px; font-weight: bold;
         }
         .section-title::before { content: "// "; }
 
@@ -58,46 +70,58 @@
 
         .ip-box {
             background-color: #100c17; border: 1px solid var(--border-color);
-            padding: 12px 16px; border-radius: 8px; font-family: monospace;
+            padding: 14px 18px; border-radius: 10px; font-family: monospace;
             font-size: 1.05em; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
             word-break: break-all;
         }
 
-        .copy-btn, .btn {
+        /* Tombol Diperbesar & Tidak Bertumpuk */
+        .btn {
             background: var(--accent-green); color: #000; border: none;
-            padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;
-            font-size: 0.85em; text-decoration: none; transition: 0.2s; display: inline-block; text-align: center;
+            padding: 11px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            font-size: 0.9em; text-decoration: none; transition: 0.2s; display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .copy-btn:hover, .btn:hover { opacity: 0.85; }
+        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
         .btn-pink { background: var(--accent-pink); color: #fff; }
         .btn-danger { background: #ff4747; color: #fff; }
-        .btn-support { background: var(--accent-orange); color: #000; width: 100%; margin-top: 10px; display: block; }
+        .btn-support { background: var(--accent-orange); color: #000; width: 100%; margin-top: 10px; padding: 12px; font-size: 1em; }
         .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
 
-        input, textarea, select {
-            width: 100%; padding: 10px; margin: 8px 0 16px 0;
-            background: #100c17; border: 1px solid var(--border-color);
-            border-radius: 6px; color: #fff; box-sizing: border-box; font-family: inherit;
+        .form-actions {
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px;
         }
-        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        input, textarea, select {
+            width: 100%; padding: 12px 16px; margin: 8px 0 16px 0;
+            background: #100c17; border: 1px solid var(--border-color);
+            border-radius: 8px; color: #fff; box-sizing: border-box; font-family: inherit; font-size: 0.95em;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-pink); outline: none; box-shadow: 0 0 8px rgba(255, 42, 122, 0.2);
+        }
+        label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
 
         .server-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+            padding: 16px 0; border-bottom: 1px solid var(--border-color);
         }
         .server-item:last-child { border-bottom: none; }
         .hidden { display: none !important; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px 0; }
-        .stat-box { background: #100c17; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; }
-        .stat-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-        .stat-value { font-size: 1.1em; font-weight: bold; color: #fff; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 15px 0; }
+        .stat-box { background: #100c17; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; }
+        .stat-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        .stat-value { font-size: 1.2em; font-weight: bold; color: #fff; }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- Banner Poster Palworld -->
+        <img src="https://static.wikia.nocookie.net/palworld/images/1/15/1.0.png/revision/latest?cb=20260714020501" alt="Palworld Poster" class="hero-banner">
+
         <!-- BERANDA -->
         <div id="view-home">
             <div class="card flex-between">
@@ -120,11 +144,11 @@
                 <div id="server-list" class="info-text">Memuat daftar server...</div>
             </div>
 
-            <!-- FORM TAMBAH / EDIT SERVER (TERSEMBUNYI SECARA DEFAULT) -->
+            <!-- FORM TAMBAH / EDIT SERVER -->
             <div class="card hidden" id="register-card">
                 <div class="flex-between" style="margin-bottom: 15px;">
                     <div class="section-title" id="form-title" style="margin: 0;">Daftarkan Server Baru</div>
-                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75em;" onclick="toggleRegisterForm()">✕ Tutup</button>
+                    <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8em;" onclick="toggleRegisterForm()">✕ Tutup</button>
                 </div>
 
                 <form id="server-form" onsubmit="saveServer(event)">
@@ -160,7 +184,7 @@
                     <label>Slug URL Unik (untuk URL publik)</label>
                     <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                         <div>
                             <label>vCPU</label>
                             <input type="text" id="srv-vcpu" placeholder="3 vCPU">
@@ -175,8 +199,8 @@
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
-                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1;">Simpan & Daftarkan Server</button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1; min-width: 200px;">Simpan & Daftarkan Server</button>
                         <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
                         <button type="button" class="btn btn-secondary hidden" id="cancel-edit-btn" onclick="resetForm()">Batal</button>
                     </div>
@@ -201,7 +225,7 @@
             <div class="card">
                 <div class="flex-between" style="margin-bottom: 10px;">
                     <div class="section-title" style="margin: 0;">Status & Statistik Live</div>
-                    <button class="btn" style="padding: 4px 10px; font-size: 0.75em;" onclick="loadLiveStats()">🔄 Refresh</button>
+                    <button class="btn" style="padding: 6px 14px; font-size: 0.8em;" onclick="loadLiveStats()">🔄 Refresh</button>
                 </div>
                 
                 <div class="stats-grid">
@@ -227,23 +251,23 @@
                             <h4 id="det-join" style="margin:4px 0 15px 0; color:#fff;">-</h4>
 
                             <p style="margin:0; font-size:0.8em; color:var(--text-muted);">SPESIFIKASI HARDWARE</p>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 6px;">
-                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px;">
+                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
                                     <span style="font-size:0.75em; color:var(--text-muted);">vCPU</span>
                                     <h4 id="det-vcpu" style="margin:2px 0 0 0; color:#fff;">-</h4>
                                 </div>
-                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
                                     <span style="font-size:0.75em; color:var(--text-muted);">RAM</span>
                                     <h4 id="det-ram" style="margin:2px 0 0 0; color:#fff;">-</h4>
                                 </div>
-                                <div style="background:#100c17; padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
                                     <span style="font-size:0.75em; color:var(--text-muted);">DISK</span>
                                     <h4 id="det-disk" style="margin:2px 0 0 0; color:#fff;">-</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <a href="/" class="btn btn-secondary">← Kembali ke Beranda</a>
+                    <a href="/" class="btn btn-secondary" style="width: 100%;">← Kembali ke Beranda</a>
                 </div>
 
                 <div>
@@ -254,14 +278,14 @@
                         
                         <div class="ip-box">
                             <span id="det-ip">-</span>
-                            <button class="copy-btn" onclick="copyIP()">SALIN</button>
+                            <button class="copy-btn btn" style="padding: 6px 12px; font-size: 0.8em;" onclick="copyIP()">SALIN</button>
                         </div>
 
                         <div id="password-container" class="hidden" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                             <p style="margin:0 0 8px 0; font-size:0.8em; color:var(--text-muted);">PASSWORD SERVER</p>
                             <div style="display: flex; gap: 8px; align-items: center;">
                                 <input type="password" id="det-server-pass" value="" readonly style="margin:0; background:#100c17; font-family:monospace; color:#fff;">
-                                <button class="copy-btn" id="reveal-pass-btn" onclick="togglePassword()" style="white-space:nowrap;">LIHAT</button>
+                                <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="white-space:nowrap; padding: 10px 14px; font-size: 0.8em;">LIHAT</button>
                             </div>
                         </div>
                     </div>
@@ -282,8 +306,10 @@
             <p class="info-text">Masukkan email kamu untuk masuk atau mendaftar otomatis.</p>
             <label>Email</label>
             <input type="email" id="auth-email" placeholder="email@domain.com">
-            <button class="btn" onclick="handleLogin()">Kirim Link Login</button>
-            <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn btn-pink" style="flex: 1;" onclick="handleLogin()">Kirim Link Login</button>
+                <button class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
+            </div>
         </div>
     </div>
 
@@ -323,8 +349,8 @@
 
             if (currentUser) {
                 authSection.innerHTML = `
-                    <span style="font-size: 0.9em; margin-right: 15px; color: var(--text-muted);">${currentUser.email}</span>
-                    <button class="btn btn-pink" onclick="handleLogout()">Logout</button>
+                    <span style="font-size: 0.9em; margin-right: 12px; color: var(--text-muted);">${currentUser.email}</span>
+                    <button class="btn btn-pink" style="padding: 8px 16px;" onclick="handleLogout()">Logout</button>
                 `;
                 addBtnContainer.classList.remove('hidden');
             } else {
@@ -369,12 +395,12 @@
             listDiv.innerHTML = data.map(srv => `
                 <div class="server-item">
                     <div>
-                        <strong style="color: #fff; font-size: 1.1em;">${srv.name}</strong><br>
+                        <strong style="color: #fff; font-size: 1.15em;">${srv.name}</strong><br>
                         <span style="font-size: 0.85em; color: var(--text-muted);">IP: ${srv.ip}</span>
                     </div>
-                    <div>
-                        <a href="/server/${srv.slug}" class="btn" style="padding: 6px 12px; font-size: 0.8em; margin-right: 5px;">Status</a>
-                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.8em;">Edit</a>` : ''}
+                    <div style="display: flex; gap: 8px;">
+                        <a href="/server/${srv.slug}" class="btn" style="padding: 8px 16px; font-size: 0.85em;">Status</a>
+                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 8px 16px; font-size: 0.85em;">Edit</a>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -559,7 +585,7 @@
                         document.getElementById('delete-server-btn').classList.remove('hidden');
                         document.getElementById('cancel-edit-btn').classList.remove('hidden');
                         document.getElementById('register-card').classList.remove('hidden');
-                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, height: 'smooth' });
+                        window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
                     }
                 }, 1000);
             }
