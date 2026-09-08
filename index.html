@@ -25,9 +25,35 @@
             color: var(--text-main);
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0; padding: 30px 15px; display: flex; justify-content: center;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 900px; width: 100%; display: flex; flex-direction: column; min-height: 90vh; }
+        /* Dekorasi Karakter Pal di Kiri & Kanan */
+        .pal-character {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            height: auto;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.95;
+            transition: opacity 0.3s ease;
+        }
+        .pal-left {
+            left: 10px;
+        }
+        .pal-right {
+            right: 10px;
+        }
+        @media (max-width: 1350px) {
+            .pal-character {
+                display: none;
+            }
+        }
+
+        .container { max-width: 900px; width: 100%; display: flex; flex-direction: column; min-height: 90vh; position: relative; z-index: 20; }
         .content-wrapper { flex: 1; }
 
         /* Menu Navigasi Atas */
@@ -313,6 +339,10 @@
     </style>
 </head>
 <body>
+
+    <!-- Karakter Pal Dekorasi di Kiri & Kanan -->
+    <img src="img/imgi_10_img-intro-character-left.png" alt="Pal Left" class="pal-character pal-left">
+    <img src="img/imgi_11_img-intro-character-right.png" alt="Pal Right" class="pal-character pal-right">
 
     <div class="container">
         <div class="content-wrapper">
