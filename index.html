@@ -25,7 +25,8 @@
             margin: 0; padding: 30px 15px; display: flex; justify-content: center;
         }
 
-        .container { max-width: 900px; width: 100%; }
+        .container { max-width: 900px; width: 100%; display: flex; flex-direction: column; min-height: 90vh; }
+        .content-wrapper { flex: 1; }
 
         /* Menu Navigasi Atas */
         .top-nav {
@@ -171,7 +172,7 @@
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Daftar Pemain Online (Jarak pas & rapi di bawah judul) */
+        /* Styling Daftar Pemain Online */
         .players-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -193,6 +194,56 @@
             background-color: #161622;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(163, 255, 71, 0.1);
+        }
+
+        /* Footer Styling */
+        .footer {
+            margin-top: 40px;
+            padding: 24px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .footer p {
+            margin: 0 0 12px 0;
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+        .footer span {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+        }
+        .social-icon-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background-color: #100c17;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .social-icon-link:hover {
+            border-color: var(--accent-pink);
+            transform: translateY(-2px);
+            color: var(--accent-pink);
+            box-shadow: 0 4px 12px rgba(255, 42, 122, 0.2);
+        }
+        .social-icon-link svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
         .modal-overlay {
@@ -249,184 +300,204 @@
 <body>
 
     <div class="container">
-        
-        <!-- Menu Navigasi Atas -->
-        <div class="top-nav">
-            <a href="/" class="nav-link" id="nav-home">Beranda</a>
-            <a href="/?view=about" class="nav-link" id="nav-about">Tentang</a>
-        </div>
-
-        <!-- Banner Gaming Keren (Clickable ke Home) -->
-        <div class="hero-banner" onclick="window.location.href='/'">
-            <h2 class="hero-subtitle">Dedicated Server Hub</h2>
-            <h1 class="hero-title">PALWORLD INDONESIA</h1>
-        </div>
-
-        <!-- BERANDA (DAFTAR SERVER) -->
-        <div id="view-home">
-            <div class="card header-card">
-                <div>
-                    <h2>Palworld Community Platform</h2>
-                    <h1>Public Palworld Server</h1>
-                </div>
-                <div id="auth-section">
-                    <button class="btn" onclick="openLoginModal()">Login / Register</button>
-                </div>
+        <div class="content-wrapper">
+            <!-- Menu Navigasi Atas -->
+            <div class="top-nav">
+                <a href="/" class="nav-link" id="nav-home">Beranda</a>
+                <a href="/?view=about" class="nav-link" id="nav-about">Tentang</a>
             </div>
 
-            <!-- TOMBOL NAVIGASI TAB BESAR (SPLIT) -->
-            <div class="tab-container">
-                <button class="btn-tab active" id="tab-btn-public" onclick="switchTab('public')">🌐 Public Server</button>
-                <button class="btn-tab hidden" id="tab-btn-my" onclick="switchTab('my')">💻 Server Saya</button>
+            <!-- Banner Gaming Keren (Clickable ke Home) -->
+            <div class="hero-banner" onclick="window.location.href='/'">
+                <h2 class="hero-subtitle">Dedicated Server Hub</h2>
+                <h1 class="hero-title">PALWORLD INDONESIA</h1>
             </div>
 
-            <!-- KONTEN TAB: PUBLIC SERVER -->
-            <div class="card" id="tab-content-public">
-                <div class="flex-between" style="margin-bottom: 12px;">
-                    <div class="section-title">Public Server</div>
-                </div>
-                <div id="public-server-list">Memuat daftar public server...</div>
-            </div>
-
-            <!-- KONTEN TAB: SERVER SAYA -->
-            <div class="card hidden" id="tab-content-my">
-                <div class="flex-between" style="margin-bottom: 12px;">
-                    <div class="section-title">Server Saya</div>
-                    <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
-                </div>
-                <div id="my-server-list">Memuat server Anda...</div>
-            </div>
-        </div>
-
-        <!-- TENTANG APLIKASI (ABOUT) -->
-        <div id="view-about" class="hidden">
-            <div class="card">
-                <div class="section-title" style="margin-bottom: 15px;">Tentang Aplikasi</div>
-                <h1 style="margin-bottom: 20px; font-size: 1.6em;">Palworld Dedicated Server Hub</h1>
-                
-                <p class="info-text" style="font-size: 1.05em; color: var(--text-main);">
-                    Aplikasi ini dikembangkan untuk mempertemukan para pemain (<em>player</em>) dengan pengurus Dedicated Server Palworld di Indonesia.
-                </p>
-                <p class="info-text">
-                    Tujuan utama platform ini adalah untuk memudahkan pemain dalam menemukan Dedicated Server yang sesuai dengan kriteria dan preferensi bermain mereka, sekaligus membantu para pengurus server dalam menjangkau audiens yang lebih luas guna membangun komunitas pemain yang aktif dan ramai.
-                </p>
-                <p class="info-text">
-                    Dengan adanya direktori status server secara <em>real-time</em>, pemain dapat melihat statistik pemain aktif, versi server, dan cara bergabung sebelum memutuskan untuk masuk ke dalam sebuah komunitas.
-                </p>
-            </div>
-        </div>
-
-        <!-- DETAIL SERVER -->
-        <div id="view-detail" class="hidden">
-            <div class="card header-card">
-                <div>
-                    <h2>Palworld Dedicated Server</h2>
-                    <h1 id="det-name">Memuat Server...</h1>
-                </div>
-                <div class="status-badge" id="det-status-badge">
-                    <div class="dot"></div>
-                    <span id="det-status-text">Menghubungkan...</span>
-                </div>
-            </div>
-
-            <!-- WIDGET STATISTIK LIVE -->
-            <div class="card">
-                <div class="flex-between" style="margin-bottom: 10px;">
-                    <div class="section-title">Status & Statistik Live</div>
-                    <button class="btn" style="padding: 6px 14px; font-size: 0.8em;" onclick="loadLiveStats()">🔄 Refresh</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-label">Players Online</div>
-                        <div class="stat-value" id="stat-players">- / 32</div>
+            <!-- BERANDA (DAFTAR SERVER) -->
+            <div id="view-home">
+                <div class="card header-card">
+                    <div>
+                        <h2>Palworld Community Platform</h2>
+                        <h1>Public Palworld Server</h1>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Server Version</div>
-                        <div class="stat-value" id="stat-version">-</div>
+                    <div id="auth-section">
+                        <button class="btn" onclick="openLoginModal()">Login / Register</button>
                     </div>
                 </div>
+
+                <!-- TOMBOL NAVIGASI TAB BESAR (SPLIT) -->
+                <div class="tab-container">
+                    <button class="btn-tab active" id="tab-btn-public" onclick="switchTab('public')">🌐 Public Server</button>
+                    <button class="btn-tab hidden" id="tab-btn-my" onclick="switchTab('my')">💻 Server Saya</button>
+                </div>
+
+                <!-- KONTEN TAB: PUBLIC SERVER -->
+                <div class="card" id="tab-content-public">
+                    <div class="flex-between" style="margin-bottom: 12px;">
+                        <div class="section-title">Public Server</div>
+                    </div>
+                    <div id="public-server-list">Memuat daftar public server...</div>
+                </div>
+
+                <!-- KONTEN TAB: SERVER SAYA -->
+                <div class="card hidden" id="tab-content-my">
+                    <div class="flex-between" style="margin-bottom: 12px;">
+                        <div class="section-title">Server Saya</div>
+                        <button class="btn btn-pink" onclick="openRegisterModal()">+ Tambah Server Baru</button>
+                    </div>
+                    <div id="my-server-list">Memuat server Anda...</div>
+                </div>
             </div>
 
-            <div class="grid-layout">
-                <!-- Kolom Kiri: Tentang Server & Daftar Pemain Online (Selaras Atas-Bawah) -->
-                <div>
-                    <div class="card">
-                        <div class="section-title" style="margin-bottom: 12px;">Tentang Server</div>
-                        <div class="info-text" id="det-desc">-</div>
-                        
-                        <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                            <p style="margin:0; font-size:0.8em; color:var(--text-muted);">METODE JOIN</p>
-                            <h4 id="det-join" style="margin:4px 0 15px 0; color:#fff;">-</h4>
+            <!-- TENTANG APLIKASI (ABOUT) -->
+            <div id="view-about" class="hidden">
+                <div class="card">
+                    <div class="section-title" style="margin-bottom: 15px;">Tentang Aplikasi</div>
+                    <h1 style="margin-bottom: 20px; font-size: 1.6em;">Palworld Dedicated Server Hub</h1>
+                    
+                    <p class="info-text" style="font-size: 1.05em; color: var(--text-main);">
+                        Aplikasi ini dikembangkan untuk mempertemukan para pemain (<em>player</em>) dengan pengurus Dedicated Server Palworld di Indonesia.
+                    </p>
+                    <p class="info-text">
+                        Tujuan utama platform ini adalah untuk memudahkan pemain dalam menemukan Dedicated Server yang sesuai dengan kriteria dan preferensi bermain mereka, sekaligus membantu para pengurus server dalam menjangkau audiens yang lebih luas guna membangun komunitas pemain yang aktif dan ramai.
+                    </p>
+                    <p class="info-text">
+                        Dengan adanya direktori status server secara <em>real-time</em>, pemain dapat melihat statistik pemain aktif, versi server, dan cara bergabung sebelum memutuskan untuk masuk ke dalam sebuah komunitas.
+                    </p>
+                </div>
+            </div>
 
-                            <p style="margin:0; font-size:0.8em; color:var(--text-muted);">SPESIFIKASI HARDWARE</p>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px;">
-                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
-                                    <span style="font-size:0.75em; color:var(--text-muted);">vCPU</span>
-                                    <h4 id="det-vcpu" style="margin:2px 0 0 0; color:#fff;">-</h4>
-                                </div>
-                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
-                                    <span style="font-size:0.75em; color:var(--text-muted);">RAM</span>
-                                    <h4 id="det-ram" style="margin:2px 0 0 0; color:#fff;">-</h4>
-                                </div>
-                                <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
-                                    <span style="font-size:0.75em; color:var(--text-muted);">DISK</span>
-                                    <h4 id="det-disk" style="margin:2px 0 0 0; color:#fff;">-</h4>
+            <!-- DETAIL SERVER -->
+            <div id="view-detail" class="hidden">
+                <div class="card header-card">
+                    <div>
+                        <h2>Palworld Dedicated Server</h2>
+                        <h1 id="det-name">Memuat Server...</h1>
+                    </div>
+                    <div class="status-badge" id="det-status-badge">
+                        <div class="dot"></div>
+                        <span id="det-status-text">Menghubungkan...</span>
+                    </div>
+                </div>
+
+                <!-- WIDGET STATISTIK LIVE -->
+                <div class="card">
+                    <div class="flex-between" style="margin-bottom: 10px;">
+                        <div class="section-title">Status & Statistik Live</div>
+                        <button class="btn" style="padding: 6px 14px; font-size: 0.8em;" onclick="loadLiveStats()">🔄 Refresh</button>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Players Online</div>
+                            <div class="stat-value" id="stat-players">- / 32</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Server Version</div>
+                            <div class="stat-value" id="stat-version">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-layout">
+                    <!-- Kolom Kiri: Tentang Server & Daftar Pemain Online -->
+                    <div>
+                        <div class="card">
+                            <div class="section-title" style="margin-bottom: 12px;">Tentang Server</div>
+                            <div class="info-text" id="det-desc">-</div>
+                            
+                            <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">METODE JOIN</p>
+                                <h4 id="det-join" style="margin:4px 0 15px 0; color:#fff;">-</h4>
+
+                                <p style="margin:0; font-size:0.8em; color:var(--text-muted);">SPESIFIKASI HARDWARE</p>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px;">
+                                    <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+                                        <span style="font-size:0.75em; color:var(--text-muted);">vCPU</span>
+                                        <h4 id="det-vcpu" style="margin:2px 0 0 0; color:#fff;">-</h4>
+                                    </div>
+                                    <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+                                        <span style="font-size:0.75em; color:var(--text-muted);">RAM</span>
+                                        <h4 id="det-ram" style="margin:2px 0 0 0; color:#fff;">-</h4>
+                                    </div>
+                                    <div style="background:#100c17; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+                                        <span style="font-size:0.75em; color:var(--text-muted);">DISK</span>
+                                        <h4 id="det-disk" style="margin:2px 0 0 0; color:#fff;">-</h4>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- DAFTAR PEMAIN ONLINE (Jarak Judul & Box Diberi Ruang Nyaman / Tidak Terlalu Dekat) -->
-                    <div class="card">
-                        <div class="section-title">Daftar Pemain Online</div>
-                        <div id="players-list-content">Memuat daftar pemain...</div>
-                    </div>
-
-                    <a href="/" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">← Kembali ke Beranda</a>
-                </div>
-
-                <!-- Kolom Kanan: Koneksi Server, Discord, & Dukungan -->
-                <div>
-                    <!-- KONEKSI & PASSWORD -->
-                    <div class="card">
-                        <div class="section-title" style="margin-bottom: 12px;">Koneksi Server</div>
-                        <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
-                        
-                        <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
-                        <div class="ip-box">
-                            <span id="det-ip">-</span>
-                            <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
+                        <!-- DAFTAR PEMAIN ONLINE -->
+                        <div class="card" style="padding: 16px 20px;">
+                            <div class="section-title" style="margin-bottom: 0;">Daftar Pemain Online</div>
+                            <div id="players-list-content" style="margin-top: 4px;">Memuat daftar pemain...</div>
                         </div>
 
-                        <div id="password-container" style="margin-top: 14px;">
-                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server Game</div>
+                        <a href="/" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">← Kembali ke Beranda</a>
+                    </div>
+
+                    <!-- Kolom Kanan: Koneksi Server, Discord, & Dukungan -->
+                    <div>
+                        <!-- KONEKSI & PASSWORD -->
+                        <div class="card">
+                            <div class="section-title" style="margin-bottom: 12px;">Koneksi Server</div>
+                            <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
+                            
+                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
                             <div class="ip-box">
-                                <span id="det-pass-display" style="color: #fff;">••••••••</span>
-                                <div id="pass-btn-group" style="display: flex; gap: 6px; white-space: nowrap;">
-                                    <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="padding: 6px 10px; font-size: 0.8em; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">LIHAT</button>
-                                    <button class="copy-btn btn" id="copy-pass-btn" onclick="copyPassword()" style="padding: 6px 10px; font-size: 0.8em;">SALIN</button>
+                                <span id="det-ip">-</span>
+                                <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
+                            </div>
+
+                            <div id="password-container" style="margin-top: 14px;">
+                                <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server Game</div>
+                                <div class="ip-box">
+                                    <span id="det-pass-display" style="color: #fff;">••••••••</span>
+                                    <div id="pass-btn-group" style="display: flex; gap: 6px; white-space: nowrap;">
+                                        <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="padding: 6px 10px; font-size: 0.8em; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">LIHAT</button>
+                                        <button class="copy-btn btn" id="copy-pass-btn" onclick="copyPassword()" style="padding: 6px 10px; font-size: 0.8em;">SALIN</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- TOMBOL KOMUNITAS / DISCORD -->
-                    <div class="card hidden" id="discord-card" style="text-align: center;">
-                        <div class="section-title" style="text-align: left; margin-bottom: 12px;">Komunitas Server</div>
-                        <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bergabunglah dengan server Discord komunitas untuk bermain bersama.</p>
-                        <a href="#" id="det-discord-link" target="_blank" class="btn-discord" style="width: 100%; box-sizing: border-box;">💬 Gabung Discord Komunitas</a>
-                    </div>
+                        <!-- TOMBOL KOMUNITAS / DISCORD -->
+                        <div class="card hidden" id="discord-card" style="text-align: center;">
+                            <div class="section-title" style="text-align: left; margin-bottom: 12px;">Komunitas Server</div>
+                            <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bergabunglah dengan server Discord komunitas untuk bermain bersama.</p>
+                            <a href="#" id="det-discord-link" target="_blank" class="btn-discord" style="width: 100%; box-sizing: border-box;">💬 Gabung Discord Komunitas</a>
+                        </div>
 
-                    <!-- TOMBOL DONASI / SUPPORT -->
-                    <div class="card hidden" id="support-card" style="text-align: center;">
-                        <div class="section-title" style="text-align: left; margin-bottom: 12px;">Dukung Server</div>
-                        <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa.</p>
-                        <a href="#" id="det-support-link" target="_blank" class="btn-support" style="width: 100%; box-sizing: border-box;">☕ Support / Donasi Server</a>
+                        <!-- TOMBOL DONASI / SUPPORT -->
+                        <div class="card hidden" id="support-card" style="text-align: center;">
+                            <div class="section-title" style="text-align: left; margin-bottom: 12px;">Dukung Server</div>
+                            <p class="info-text" style="font-size: 0.85em; margin-bottom: 14px; text-align: left;">Bantu pemilik server untuk terus aktif dan membayar biaya sewa.</p>
+                            <a href="#" id="det-support-link" target="_blank" class="btn-support" style="width: 100%; box-sizing: border-box;">☕ Support / Donasi Server</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- FOOTER DISETIAP HALAMAN -->
+        <footer class="footer">
+            <p>Dibuat dengan ❤️ oleh <span>Hanjukutamago</span></p>
+            <div class="social-icons">
+                <!-- YouTube -->
+                <a href="https://www.youtube.com/@hanjukutamago18" target="_blank" class="social-icon-link" title="YouTube">
+                    <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@hanjukutamago18" target="_blank" class="social-icon-link" title="TikTok">
+                    <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                </a>
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/mblaksmana" target="_blank" class="social-icon-link" title="Instagram">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+            </div>
+        </footer>
 
         <!-- MODAL POP-UP: TAMBAH / EDIT SERVER -->
         <div class="modal-overlay hidden" id="register-modal">
