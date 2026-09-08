@@ -66,6 +66,7 @@
         }
         .copy-btn:hover, .btn:hover { opacity: 0.85; }
         .btn-pink { background: var(--accent-pink); color: #fff; }
+        .btn-danger { background: #ff4747; color: #fff; }
 
         input, textarea, select {
             width: 100%; padding: 10px; margin: 8px 0 16px 0;
@@ -147,8 +148,11 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-pink" id="submit-btn">Simpan & Daftarkan Server</button>
-                    <button type="button" class="btn hidden" id="cancel-edit-btn" onclick="resetForm()" style="background:transparent; color:var(--text-muted);">Batal Edit</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="submit" class="btn btn-pink" id="submit-btn" style="flex: 1;">Simpan & Daftarkan Server</button>
+                        <button type="button" class="btn btn-danger hidden" id="delete-server-btn" onclick="deleteServer()">Hapus Server</button>
+                        <button type="button" class="btn hidden" id="cancel-edit-btn" onclick="resetForm()" style="background:transparent; color:var(--text-muted);">Batal</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -297,7 +301,10 @@
                         <strong style="color: #fff; font-size: 1.1em;">${srv.name}</strong><br>
                         <span style="font-size: 0.85em; color: var(--text-muted);">IP: ${srv.ip}</span>
                     </div>
-                    <a href="/server/${srv.slug}" class="btn" style="padding: 6px 12px; font-size: 0.8em;">Status</a>
+                    <div>
+                        <a href="/server/${srv.slug}" class="btn" style="padding: 6px 12px; font-size: 0.8em; margin-right: 5px;">Status</a>
+                        ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.8em;">Edit</a>` : ''}
+                    </div>
                 </div>
             `).join('');
         }
@@ -324,24 +331,19 @@
             const badge = document.getElementById('det-status-badge');
             badge.innerHTML = `<div class="dot"></div><span>ONLINE</span>`;
 
-            // Jika pengguna yang login adalah pemilik server ini, tampilkan tombol Edit di beranda (atau beri opsi edit)
             if (currentUser && currentUser.id === data.user_id) {
-                // Tambahkan tombol edit cepat di halaman detail
                 const headerCard = document.querySelector('#view-detail .header-card');
                 if (!document.getElementById('edit-btn-trigger')) {
                     const editBtn = document.createElement('button');
                     editBtn.id = 'edit-btn-trigger';
-                    editBtn.className = 'btn';
+                    editBtn.className = 'btn btn-pink';
                     editBtn.style.marginTop = '10px';
+                    editBtn.style.marginRight = '8px';
                     editBtn.innerText = 'Edit Info Server';
-                    editBtn.onclick = () => populateEditForm(data);
+                    editBtn.onclick = () => window.location.href = '/?edit=' + data.slug;
                     headerCard.querySelector('div').appendChild(editBtn);
                 }
             }
-        }
-
-        function populateEditForm(data) {
-            window.location.href = '/?edit=' + data.slug;
         }
 
         async function saveServer(e) {
@@ -361,7 +363,6 @@
             const disk = document.getElementById('srv-disk').value;
 
             if (serverId) {
-                // Update data server yang sudah ada
                 const { error } = await supabaseClient.from('servers').update({
                     name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk
                 }).eq('id', serverId);
@@ -369,7 +370,6 @@
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
-                // Insert server baru
                 const { error } = await supabaseClient.from('servers').insert([
                     { name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
@@ -379,15 +379,30 @@
             }
         }
 
+        async function deleteServer() {
+            const serverId = document.getElementById('edit-server-id').value;
+            if (!serverId) return;
+
+            if (confirm("Apakah kamu yakin ingin menghapus server ini secara permanen?")) {
+                const { error } = await supabaseClient.from('servers').delete().eq('id', serverId);
+                if (error) {
+                    alert('Gagal menghapus server: ' + error.message);
+                } else {
+                    alert('Server berhasil dihapus!');
+                    window.location.href = '/';
+                }
+            }
+        }
+
         function resetForm() {
             document.getElementById('server-form').reset();
             document.getElementById('edit-server-id').value = "";
             document.getElementById('form-title').innerText = "Daftarkan Server Baru";
             document.getElementById('submit-btn').innerText = "Simpan & Daftarkan Server";
+            document.getElementById('delete-server-btn').classList.add('hidden');
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         }
 
-        // Cek parameter query edit saat halaman dimuat
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const editSlug = urlParams.get('edit');
@@ -409,6 +424,7 @@
 
                         document.getElementById('form-title').innerText = "Edit Informasi Server";
                         document.getElementById('submit-btn').innerText = "Simpan Perubahan";
+                        document.getElementById('delete-server-btn').classList.remove('hidden');
                         document.getElementById('cancel-edit-btn').classList.remove('hidden');
                         window.scrollTo({ top: document.getElementById('register-card').offsetTop, behavior: 'smooth' });
                     }
