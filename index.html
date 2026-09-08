@@ -362,14 +362,20 @@
             const ram = document.getElementById('srv-ram').value;
             const disk = document.getElementById('srv-disk').value;
 
-            if (serverId) {
+            // Karena kita menggunakan slug sebagai acuan unik, kita cek apakah ini mode edit atau insert baru
+            const urlParams = new URLSearchParams(window.location.search);
+            const editSlug = urlParams.get('edit');
+
+            if (editSlug) {
+                // Update berdasarkan slug lama
                 const { error } = await supabaseClient.from('servers').update({
                     name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk
-                }).eq('id', serverId);
+                }).eq('slug', editSlug);
 
                 if (error) alert('Gagal memperbarui: ' + error.message);
                 else { alert('Server berhasil diperbarui!'); window.location.href = '/server/' + slug; }
             } else {
+                // Insert server baru
                 const { error } = await supabaseClient.from('servers').insert([
                     { name, description, ip, join_method, api_port, admin_password, slug, vcpu, ram, disk, user_id: currentUser.id }
                 ]);
