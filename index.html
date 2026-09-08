@@ -167,7 +167,7 @@
         /* Styling Daftar Pemain Online (Compact Grid Box dengan Hover) */
         .players-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 10px;
             margin-top: 12px;
         }
@@ -741,7 +741,6 @@
                 passBtnGroup.classList.add('hidden');
             }
 
-            // Menampilkan atau menyembunyikan tombol Discord Komunitas
             if (data.discord_link && data.discord_link.trim() !== "") {
                 document.getElementById('det-discord-link').href = data.discord_link;
                 document.getElementById('discord-card').classList.remove('hidden');
@@ -796,12 +795,12 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
-                        // Menampilkan tepat 5 digit awal UID agar aman namun tetap teridentifikasi jelas
+                        // Menampilkan 16 digit pertama UID pemain
                         playersListContainer.innerHTML = `
                             <div class="players-grid">
                                 ${players.map(p => {
                                     const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
-                                    const maskedUid = rawUid ? rawUid.substring(0, 5) + '...' : '-';
+                                    const maskedUid = rawUid ? rawUid.substring(0, 16) + (rawUid.length > 16 ? '...' : '') : '-';
                                     
                                     return `
                                         <div class="player-box">
@@ -934,7 +933,7 @@
 
                         document.getElementById('form-title').innerText = "Edit Informasi Server";
                         document.getElementById('submit-btn').innerText = "Simpan Perubahan";
-                        document.getElementById('delete-server-btn').classList.remove('hidden');
+                        document.getElementById('delete-server-btn').classList.add('hidden');
                         openRegisterModal();
                     }
                 }, 1000);
