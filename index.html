@@ -150,7 +150,7 @@
         }
         .btn-tab:hover:not(.active) { border-color: var(--accent-pink); color: #fff; }
 
-        /* List Server (Clickable Area) */
+        /* List Server (Clickable Card) */
         .server-item {
             background-color: #100c17; border: 1px solid var(--border-color);
             border-radius: 10px; padding: 10px 16px; margin-bottom: 6px;
@@ -161,6 +161,30 @@
         .server-item:hover {
             border-color: var(--accent-pink); background-color: #161122;
             transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
+        }
+
+        /* Styling Daftar Pemain Online (Compact Grid Box dengan Hover) */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .player-box {
+            background-color: #100c17;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .player-box:hover {
+            border-color: var(--accent-green);
+            background-color: #161622;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(163, 255, 71, 0.1);
         }
 
         .modal-overlay {
@@ -420,7 +444,6 @@
                             <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
                         </div>
 
-                        <!-- Struktur HTML Password Diperbarui agar mendukung "Tanpa Password" -->
                         <div id="password-container" style="margin-top: 14px;">
                             <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server Game</div>
                             <div class="ip-box">
@@ -484,7 +507,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const viewParam = urlParams.get('view');
 
-            // Routing Logic
             if (pathSegments[1] === 'server' && pathSegments[2]) {
                 document.getElementById('view-home').classList.add('hidden');
                 document.getElementById('view-about').classList.add('hidden');
@@ -604,8 +626,6 @@
                 ? '<span style="font-size: 0.7em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,159,67,0.3);">Private</span>' 
                 : '<span style="font-size: 0.7em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(163,255,71,0.3);">Public</span>') : '';
 
-            // Perhatikan fungsi onclick di tingkat class server-item agar kotak dapat diklik (Clickable Card)
-            // event.stopPropagation() ditaruh di tombol dalam card agar tidak bertabrakan dengan klik card.
             return `
                 <div class="server-item" onclick="window.location.href='/server/${srv.slug}'">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; flex-wrap: wrap;">
@@ -682,7 +702,6 @@
             document.getElementById('det-ram').innerText = data.ram || "-";
             document.getElementById('det-disk').innerText = data.disk || "-";
 
-            // LOGIKA PENAMPILAN PASSWORD / TANPA PASSWORD
             const passDisplay = document.getElementById('det-pass-display');
             const passBtnGroup = document.getElementById('pass-btn-group');
             const revealBtn = document.getElementById('reveal-pass-btn');
@@ -750,17 +769,24 @@
                     document.getElementById('stat-players').innerText = `${playerCount} / 32`;
 
                     if (playerCount > 0) {
-                        playersListContainer.innerHTML = players.map(p => {
-                            const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
-                            const formattedUid = rawUid ? rawUid.substring(0, 8) + '...' : '-';
-                            
-                            return `
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                                    <span style="color: #fff; font-weight: 500;">🎮 ${p.name || 'Unknown Player'}</span>
-                                    <span style="font-size: 0.8em; color: var(--text-muted); font-family: monospace;">UID: ${formattedUid}</span>
-                                </div>
-                            `;
-                        }).join('');
+                        // Membuat grid box compact dengan menampilkan setengah UID demi keamanan player
+                        playersListContainer.innerHTML = `
+                            <div class="players-grid">
+                                ${players.map(p => {
+                                    const rawUid = p.userId || p.playerUid || p.guid || p.steamId || '';
+                                    // Menampilkan setengah bagian awal dari UID agar aman dan tetap dapat diidentifikasi
+                                    const halfLength = Math.max(4, Math.floor(rawUid.length / 2));
+                                    const maskedUid = rawUid ? rawUid.substring(0, halfLength) + '...' : '-';
+                                    
+                                    return `
+                                        <div class="player-box">
+                                            <span style="color: #fff; font-weight: 600; font-size: 0.9em;">🎮 ${p.name || 'Unknown Player'}</span>
+                                            <span style="font-size: 0.75em; color: var(--text-muted); font-family: monospace;" title="${rawUid}">UID: ${maskedUid}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
                     } else {
                         playersListContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Belum ada pemain yang online saat ini.</div>`;
                     }
