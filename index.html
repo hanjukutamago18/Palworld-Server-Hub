@@ -26,6 +26,21 @@
 
         .container { max-width: 900px; width: 100%; }
 
+        /* Menu Navigasi Atas */
+        .top-nav {
+            display: flex; gap: 20px; align-items: center; margin-bottom: 20px;
+            background-color: var(--bg-card); border: 1px solid var(--border-color);
+            padding: 14px 24px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .nav-link {
+            color: var(--text-muted); text-decoration: none; font-weight: 600;
+            font-size: 0.95em; transition: color 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-pink);
+        }
+
         /* Banner Gaming Keren */
         .hero-banner {
             width: 100%;
@@ -104,15 +119,12 @@
 
         .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; white-space: pre-line; }
 
-        /* Kotak IP & Password Seragam */
         .ip-box {
             background-color: #100c17; border: 1px solid var(--border-color);
             padding: 12px 16px; border-radius: 10px; font-family: monospace;
             font-size: 0.95em; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;
         }
-        .ip-box span {
-            overflow-x: auto; white-space: nowrap; scrollbar-width: thin;
-        }
+        .ip-box span { overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
 
         .btn {
             background: var(--accent-green); color: #000; border: none;
@@ -124,10 +136,7 @@
         .btn-pink { background: var(--accent-pink); color: #fff; }
         .btn-danger { background: #ff4747; color: #fff; }
         
-        /* Tombol Navigasi Tab Besar (Split) */
-        .tab-container {
-            display: flex; gap: 15px; margin-bottom: 20px;
-        }
+        .tab-container { display: flex; gap: 15px; margin-bottom: 20px; }
         .btn-tab {
             flex: 1;
             background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color);
@@ -139,33 +148,21 @@
             background: var(--accent-pink); color: #fff; border-color: var(--accent-pink);
             box-shadow: 0 6px 20px rgba(255, 42, 122, 0.4);
         }
-        .btn-tab:hover:not(.active) {
-            border-color: var(--accent-pink); color: #fff;
-        }
+        .btn-tab:hover:not(.active) { border-color: var(--accent-pink); color: #fff; }
 
-        /* List Server Sangat Compact & Sejajar (Margin Diperkecil) */
+        /* List Server (Clickable Area) */
         .server-item {
-            background-color: #100c17;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px 16px;
-            margin-bottom: 6px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            transition: all 0.2s ease;
+            background-color: #100c17; border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 10px 16px; margin-bottom: 6px;
+            display: flex; flex-direction: column; gap: 6px;
+            transition: all 0.2s ease; cursor: pointer;
         }
-        .server-item:last-child {
-            margin-bottom: 0;
-        }
+        .server-item:last-child { margin-bottom: 0; }
         .server-item:hover {
-            border-color: var(--accent-pink);
-            background-color: #161122;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
+            border-color: var(--accent-pink); background-color: #161122;
+            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 122, 0.15);
         }
 
-        /* Styling Modal Pop-Up Overlay */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(12, 9, 18, 0.85); backdrop-filter: blur(5px);
@@ -173,35 +170,22 @@
             padding: 20px; box-sizing: border-box; overflow-y: auto;
         }
         .modal-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background-color: var(--bg-card); border: 1px solid var(--border-color);
             border-radius: 14px; padding: 28px; width: 100%; max-width: 650px;
-            max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
 
         .btn-support { 
-            background: var(--accent-orange); 
-            color: #000; 
-            padding: 10px 22px; 
-            font-size: 0.9em; 
-            font-weight: 600;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            text-decoration: none;
-            transition: 0.2s;
+            background: var(--accent-orange); color: #000; padding: 10px 22px; 
+            font-size: 0.9em; font-weight: 600; border-radius: 8px; display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-decoration: none; transition: 0.2s;
         }
         .btn-support:hover { opacity: 0.85; transform: translateY(-1px); }
 
         .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
 
-        .form-actions {
-            display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px;
-        }
+        .form-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
 
         input, textarea, select {
             width: 100%; padding: 12px 16px; margin: 8px 0 16px 0;
@@ -225,13 +209,20 @@
 <body>
 
     <div class="container">
+        
+        <!-- Menu Navigasi Atas -->
+        <div class="top-nav">
+            <a href="/" class="nav-link" id="nav-home">Beranda</a>
+            <a href="/?view=about" class="nav-link" id="nav-about">Tentang</a>
+        </div>
+
         <!-- Banner Gaming Keren -->
         <div class="hero-banner">
             <h2 class="hero-subtitle">Dedicated Server Hub</h2>
             <h1 class="hero-title">PALWORLD INDONESIA</h1>
         </div>
 
-        <!-- BERANDA -->
+        <!-- BERANDA (DAFTAR SERVER) -->
         <div id="view-home">
             <div class="card header-card">
                 <div>
@@ -254,7 +245,6 @@
                 <div class="flex-between" style="margin-bottom: 12px;">
                     <div class="section-title">Public Server</div>
                 </div>
-                <!-- Menghapus class info-text agar line-height tidak mempengaruhi jarak -->
                 <div id="public-server-list">Memuat daftar public server...</div>
             </div>
 
@@ -308,7 +298,6 @@
                         <label>Slug URL Unik (untuk URL publik)</label>
                         <input type="text" id="srv-slug" placeholder="contoh: esther-sunny" required>
 
-                        <!-- Opsi Publik / Privasi Server -->
                         <div style="margin: 15px 0; display: flex; align-items: center; gap: 12px; background: #100c17; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
                             <input type="checkbox" id="srv-is-public" checked style="width: 20px; height: 20px; margin: 0; cursor: pointer;">
                             <div>
@@ -318,18 +307,9 @@
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                            <div>
-                                <label>vCPU</label>
-                                <input type="text" id="srv-vcpu" placeholder="3 vCPU">
-                            </div>
-                            <div>
-                                <label>RAM</label>
-                                <input type="text" id="srv-ram" placeholder="12 GB">
-                            </div>
-                            <div>
-                                <label>Disk</label>
-                                <input type="text" id="srv-disk" placeholder="60 GB SSD">
-                            </div>
+                            <div><label>vCPU</label><input type="text" id="srv-vcpu" placeholder="3 vCPU"></div>
+                            <div><label>RAM</label><input type="text" id="srv-ram" placeholder="12 GB"></div>
+                            <div><label>Disk</label><input type="text" id="srv-disk" placeholder="60 GB SSD"></div>
                         </div>
 
                         <div class="form-actions">
@@ -339,6 +319,24 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+
+        <!-- TENTANG APLIKASI (ABOUT) -->
+        <div id="view-about" class="hidden">
+            <div class="card">
+                <div class="section-title" style="margin-bottom: 15px;">Tentang Aplikasi</div>
+                <h1 style="margin-bottom: 20px; font-size: 1.6em;">Palworld Dedicated Server Hub</h1>
+                
+                <p class="info-text" style="font-size: 1.05em; color: var(--text-main);">
+                    Aplikasi ini dikembangkan untuk mempertemukan para pemain (<em>player</em>) dengan pengurus Dedicated Server Palworld di Indonesia.
+                </p>
+                <p class="info-text">
+                    Tujuan utama platform ini adalah untuk memudahkan pemain dalam menemukan Dedicated Server yang sesuai dengan kriteria dan preferensi bermain mereka, sekaligus membantu para pengurus server dalam menjangkau audiens yang lebih luas guna membangun komunitas pemain yang aktif dan ramai.
+                </p>
+                <p class="info-text">
+                    Dengan adanya direktori status server secara <em>real-time</em>, pemain dapat melihat statistik pemain aktif, versi server, dan cara bergabung sebelum memutuskan untuk masuk ke dalam sebuah komunitas.
+                </p>
             </div>
         </div>
 
@@ -424,7 +422,7 @@
 
                         <!-- Struktur HTML Password Diperbarui agar mendukung "Tanpa Password" -->
                         <div id="password-container" style="margin-top: 14px;">
-                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server</div>
+                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server Game</div>
                             <div class="ip-box">
                                 <span id="det-pass-display" style="color: #fff;">••••••••</span>
                                 <div id="pass-btn-group" style="display: flex; gap: 6px; white-space: nowrap;">
@@ -483,11 +481,25 @@
             });
 
             const pathSegments = window.location.pathname.split('/');
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewParam = urlParams.get('view');
+
+            // Routing Logic
             if (pathSegments[1] === 'server' && pathSegments[2]) {
                 document.getElementById('view-home').classList.add('hidden');
+                document.getElementById('view-about').classList.add('hidden');
                 document.getElementById('view-detail').classList.remove('hidden');
                 loadServerDetail(pathSegments[2]);
+            } else if (viewParam === 'about') {
+                document.getElementById('view-home').classList.add('hidden');
+                document.getElementById('view-detail').classList.add('hidden');
+                document.getElementById('view-about').classList.remove('hidden');
+                document.getElementById('nav-about').classList.add('active');
             } else {
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('view-about').classList.add('hidden');
+                document.getElementById('view-detail').classList.add('hidden');
+                document.getElementById('nav-home').classList.add('active');
                 fetchServers();
             }
         }
@@ -507,7 +519,9 @@
                 tabBtnMy.classList.add('hidden');
                 if (activeTab === 'my') switchTab('public');
             }
-            fetchServers();
+            if (!document.getElementById('view-home').classList.contains('hidden')) {
+                fetchServers();
+            }
         }
 
         function switchTab(tabName) {
@@ -590,8 +604,10 @@
                 ? '<span style="font-size: 0.7em; background: rgba(255,159,67,0.1); color: var(--accent-orange); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,159,67,0.3);">Private</span>' 
                 : '<span style="font-size: 0.7em; background: rgba(163,255,71,0.1); color: var(--accent-green); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(163,255,71,0.3);">Public</span>') : '';
 
+            // Perhatikan fungsi onclick di tingkat class server-item agar kotak dapat diklik (Clickable Card)
+            // event.stopPropagation() ditaruh di tombol dalam card agar tidak bertabrakan dengan klik card.
             return `
-                <div class="server-item">
+                <div class="server-item" onclick="window.location.href='/server/${srv.slug}'">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <strong style="color: #fff; font-size: 1.05em;">${srv.name}</strong> 
@@ -601,8 +617,8 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 6px; align-items: center;">
-                            <a href="/server/${srv.slug}" class="btn" style="padding: 6px 12px; font-size: 0.75em;">Status</a>
-                            ${currentUser && currentUser.id === srv.user_id ? `<a href="/?edit=${srv.slug}" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.75em;">Edit</a>` : ''}
+                            <button class="btn" style="padding: 6px 12px; font-size: 0.75em;" onclick="event.stopPropagation(); window.location.href='/server/${srv.slug}'">Status</button>
+                            ${currentUser && currentUser.id === srv.user_id ? `<button onclick="event.stopPropagation(); window.location.href='/?edit=${srv.slug}'" class="btn btn-pink" style="padding: 6px 12px; font-size: 0.75em;">Edit</button>` : ''}
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.78em; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
