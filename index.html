@@ -102,11 +102,11 @@
 
         .info-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95em; white-space: pre-line; }
 
-        /* Kotak IP Diperluas & Responsif untuk Domain Panjang */
+        /* Kotak IP & Password Seragam */
         .ip-box {
             background-color: #100c17; border: 1px solid var(--border-color);
             padding: 12px 16px; border-radius: 10px; font-family: monospace;
-            font-size: 0.95em; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 15px;
+            font-size: 0.95em; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;
         }
         .ip-box span {
             overflow-x: auto; white-space: nowrap; scrollbar-width: thin;
@@ -310,21 +310,25 @@
                 </div>
 
                 <div>
-                    <!-- KONEKSI & PASSWORD -->
+                    <!-- KONEKSI & PASSWORD (SEJAJAR & KONSISTEN) -->
                     <div class="card">
                         <div class="section-title">Koneksi Server</div>
-                        <div class="info-text" style="margin-bottom: 10px;">Salin alamat di bawah ini untuk bergabung:</div>
+                        <div class="info-text" style="margin-bottom: 14px;">Salin alamat atau password di bawah ini:</div>
                         
+                        <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Alamat Server / IP</div>
                         <div class="ip-box">
                             <span id="det-ip">-</span>
                             <button class="copy-btn btn" style="padding: 6px 14px; font-size: 0.8em; white-space: nowrap;" onclick="copyIP()">SALIN</button>
                         </div>
 
-                        <div id="password-container" class="hidden" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                            <p style="margin:0 0 8px 0; font-size:0.8em; color:var(--text-muted);">PASSWORD SERVER</p>
-                            <div style="display: flex; gap: 8px; align-items: center;">
-                                <input type="password" id="det-server-pass" value="" readonly style="margin:0; background:#100c17; font-family:monospace; color:#fff;">
-                                <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="white-space:nowrap; padding: 10px 14px; font-size: 0.8em;">LIHAT</button>
+                        <div id="password-container" class="hidden" style="margin-top: 14px;">
+                            <div style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Password Server</div>
+                            <div class="ip-box">
+                                <span id="det-pass-display" style="color: #fff;">••••••••</span>
+                                <div style="display: flex; gap: 6px; white-space: nowrap;">
+                                    <button class="copy-btn btn" id="reveal-pass-btn" onclick="togglePassword()" style="padding: 6px 10px; font-size: 0.8em; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">LIHAT</button>
+                                    <button class="copy-btn btn" id="copy-pass-btn" onclick="copyPassword()" style="padding: 6px 10px; font-size: 0.8em;">SALIN</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -360,6 +364,7 @@
         let currentUser = null;
         let activeServerIP = "";
         let plainServerPassword = "";
+        let isPasswordVisible = false;
         let cachedServerData = null;
 
         async function init() {
@@ -466,8 +471,10 @@
 
             if (data.server_password && data.server_password.trim() !== "") {
                 plainServerPassword = data.server_password;
+                isPasswordVisible = false;
                 document.getElementById('password-container').classList.remove('hidden');
-                document.getElementById('det-server-pass').value = "••••••••";
+                document.getElementById('det-pass-display').innerText = "••••••••";
+                document.getElementById('reveal-pass-btn').innerText = "LIHAT";
             } else {
                 document.getElementById('password-container').classList.add('hidden');
             }
@@ -525,17 +532,24 @@
         }
 
         function togglePassword() {
-            const passInput = document.getElementById('det-server-pass');
+            const passDisplay = document.getElementById('det-pass-display');
             const btn = document.getElementById('reveal-pass-btn');
-            if (passInput.type === "password") {
-                passInput.type = "text";
-                passInput.value = plainServerPassword;
+            isPasswordVisible = !isPasswordVisible;
+            if (isPasswordVisible) {
+                passDisplay.innerText = plainServerPassword;
                 btn.innerText = "SEMBUNYIKAN";
             } else {
-                passInput.type = "password";
-                passInput.value = "••••••••";
+                passDisplay.innerText = "••••••••";
                 btn.innerText = "LIHAT";
             }
+        }
+
+        function copyPassword() {
+            navigator.clipboard.writeText(plainServerPassword);
+            const btn = document.getElementById('copy-pass-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "TERSALIN!";
+            setTimeout(() => btn.innerText = originalText, 2000);
         }
 
         async function saveServer(e) {
@@ -632,9 +646,10 @@
 
         function copyIP() {
             navigator.clipboard.writeText(activeServerIP);
-            const btn = document.querySelector('.copy-btn');
+            const btn = document.querySelector('.ip-box .copy-btn');
+            const originalText = btn.innerText;
             btn.innerText = "TERSALIN!";
-            setTimeout(() => btn.innerText = "SALIN", 2000);
+            setTimeout(() => btn.innerText = originalText, 2000);
         }
 
         init();
