@@ -635,10 +635,10 @@
                     
                     <label>Kategori Server (Pilih lebih dari satu)</label>
                     <div class="checkbox-group">
-                        <label class="checkbox-label"><input type="checkbox" id="cat-pve" onchange="handleCategoryClick('other')"> PVE</label>
-                        <label class="checkbox-label"><input type="checkbox" id="cat-pvp" onchange="handleCategoryClick('other')"> PVP</label>
-                        <label class="checkbox-label"><input type="checkbox" id="cat-hardcore" onchange="handleCategoryClick('other')"> Hardcore</label>
-                        <label class="checkbox-label"><input type="checkbox" id="cat-randomizer" onchange="handleCategoryClick('other')"> Randomizer</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-pve"> PVE</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-pvp"> PVP</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-hardcore"> Hardcore</label>
+                        <label class="checkbox-label"><input type="checkbox" id="cat-randomizer"> Randomizer</label>
                     </div>
 
                     <label>Cara Bergabung (Bisa pilih keduanya)</label>
@@ -723,21 +723,6 @@
         let isPasswordVisible = false;
         let cachedServerData = null;
         let activeTab = 'public';
-
-        function handleCategoryClick(type) {
-            const pve = document.getElementById('cat-pve');
-            const pvp = document.getElementById('cat-pvp');
-            const hardcore = document.getElementById('cat-hardcore');
-            const randomizer = document.getElementById('cat-randomizer');
-
-            if (type === 'pve' && pve.checked) {
-                pvp.checked = false;
-                hardcore.checked = false;
-                randomizer.checked = false;
-            } else if (type === 'other' && (pvp.checked || hardcore.checked || randomizer.checked)) {
-                pve.checked = false;
-            }
-        }
 
         // Fungsi agar input disk disable saat dicentang 'Unlimited'
         function toggleDiskInput() {
